@@ -1,0 +1,47 @@
+# --- Secretos y entorno ---
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# --- Node / Expo (mobile) ---
+node_modules/
+.expo/
+.expo-shared/
+dist/
+web-build/
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+*.jks
+*.p8
+*.p12
+*.mobileprovision
+expo-env.d.ts
+
+# Builds nativos generados
+mobile/android/
+mobile/ios/
+
+# --- Python (api) ---
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# --- Supabase local ---
+supabase/.branches/
+supabase/.temp/
+
+# --- Editores y sistema ---
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.log
