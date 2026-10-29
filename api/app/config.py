@@ -16,6 +16,20 @@ class Settings(BaseSettings):
     supabase_anon_key: str
     # Orígenes permitidos por CORS, separados por coma.
     allowed_origins: str = "http://localhost:8081"
+    # Asistente Nutty (Gemini). La llave NUNCA va en la app móvil: solo aquí, en el servidor.
+    gemini_api_key: str = ""
+    gemini_model: str = "gemini-3.5-flash-lite"
+
+    @field_validator("gemini_api_key")
+    @classmethod
+    def _llave_sin_espacios(cls, value: str) -> str:
+        return value.strip()
+
+    @field_validator("gemini_model")
+    @classmethod
+    def _modelo_por_defecto(cls, value: str) -> str:
+        # Un `GEMINI_MODEL=` vacío en el .env no debe anular el valor por defecto.
+        return value.strip() or "gemini-3.5-flash-lite"
 
     @field_validator("supabase_url")
     @classmethod
