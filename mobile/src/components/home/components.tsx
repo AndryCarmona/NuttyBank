@@ -19,9 +19,9 @@ export function Navigation() {
   const path = usePathname();
   const items = ['Inicio', 'Calendario', 'Asistente', 'Movimientos', 'Resumen'];
   return <View style={s.nav}>{items.map((label, i) => {
-    const active = (i === 0 && (path === '/home' || path === '/'));
-    const disabled = i !== 0;
-    return <Pressable key={label} accessibilityRole="button" accessibilityLabel={i === 3 ? 'Tarjetas' : label} disabled={disabled} accessibilityState={{ selected: active, disabled }} onPress={() => { router.navigate('/home'); }} style={({ pressed }) => [s.navItem, i === 2 && s.mascotButton, pressed && { opacity: .75 }]}>{i === 2 ? <Image source={require('@/assets/images/nutty-mascot.png')} style={s.mascot} resizeMode="contain" /> : <RaisedTab active={active}><View style={[s.tabSurface, active && s.tabSelected]}><NavigationIcon name={label} /></View><View style={[s.tabDot, { opacity: active ? 1 : 0 }]} /></RaisedTab>}</Pressable>;
+    const active = (i === 0 && (path === '/home' || path === '/')) || (i === 3 && path.startsWith('/cards'));
+    const disabled = i !== 0 && i !== 3;
+    return <Pressable key={label} accessibilityRole="button" accessibilityLabel={i === 3 ? 'Tarjetas' : label} disabled={disabled} accessibilityState={{ selected: active, disabled }} onPress={() => { router.navigate(i === 3 ? '/cards' as never : '/home'); }} style={({ pressed }) => [s.navItem, i === 2 && s.mascotButton, pressed && { opacity: .75 }]}>{i === 2 ? <Image source={require('@/assets/images/nutty-mascot.png')} style={s.mascot} resizeMode="contain" /> : <RaisedTab active={active}><View style={[s.tabSurface, active && s.tabSelected]}><NavigationIcon name={label} /></View><View style={[s.tabDot, { opacity: active ? 1 : 0 }]} /></RaisedTab>}</Pressable>;
   })}</View>;
 }
 export function Summary({ onPress }: { onPress?: () => void }) {
@@ -48,3 +48,6 @@ export const s = StyleSheet.create({
   nav: { flexDirection: 'row', backgroundColor: c.panel, borderTopLeftRadius: 38, borderTopRightRadius: 38, paddingHorizontal: 13, paddingTop: 10, paddingBottom: 8, alignItems: 'center', minHeight: 76 }, navItem: { flex: 1, height: 48, justifyContent: 'center', alignItems: 'center' }, navIcon: { fontSize: 32, color: c.ink }, activeIcon: { backgroundColor: c.green, borderRadius: 16, overflow: 'hidden', paddingHorizontal: 8 }, mascotButton: { overflow: 'hidden', borderRadius: 40, backgroundColor: c.green, height: 65, maxWidth: 65, marginTop: -30, borderWidth: 5, borderColor: c.paper }, mascot: { width: 155, height: 100, position: 'absolute', top: -8, left: -56 },
   transaction: { flexDirection: 'row', alignItems: 'center', gap: 10 }, transactionIcon: { width: 45, height: 45, borderRadius: 19, alignItems: 'center', justifyContent: 'center' }, transactionName: { fontSize: 12, fontWeight: '600', color: c.ink }, detail: { fontSize: 10, color: c.muted, marginTop: 6 }, category: { fontSize: 10, color: c.muted, borderLeftWidth: 1, borderLeftColor: '#B9C4BC', paddingLeft: 9, maxWidth: 72 }, amount: { fontSize: 12, fontWeight: '600', color: c.ink, minWidth: 72, textAlign: 'right' }, empty: { textAlign: 'center', color: c.muted, paddingVertical: 24, lineHeight: 22 },
 });
+
+
+
