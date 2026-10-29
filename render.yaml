@@ -1,0 +1,21 @@
+# Despliegue del backend (FastAPI) en Render como "Blueprint".
+# Los secretos NO van aquí: Render los pide al crear el servicio (sync: false).
+services:
+  - type: web
+    name: nuttybank-api
+    runtime: python
+    rootDir: api
+    region: ohio
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    autoDeployTrigger: commit
+    envVars:
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_ANON_KEY
+        sync: false
+      # Solo importa para la versión web; la app móvil no usa CORS.
+      - key: ALLOWED_ORIGINS
+        value: http://localhost:8081
