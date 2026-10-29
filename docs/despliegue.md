@@ -19,5 +19,13 @@ Con `autoDeployTrigger: commit`, cada merge a `main` que toque `api/` se desplie
 - 750 horas gratuitas al mes por cuenta: alcanza para un solo servicio encendido todo el mes.
 - El disco es temporal: no se guardan archivos en el servidor (los datos viven en Supabase).
 
-## Variables que se agregarán después
-`GEMINI_API_KEY` y `GEMINI_MODEL` (asistente Nutty). Se agregan a mano en Render → Environment.
+## Nutty (asistente con Gemini)
+En Render → Environment agrega:
+- `GEMINI_API_KEY`: la llave de Google AI Studio. Solo existe en el servidor; la app móvil nunca la ve.
+- `GEMINI_MODEL` (opcional): si no lo pones se usa `gemini-3.5-flash-lite`. Si Google cambia o retira el
+  modelo, se corrige aquí sin tocar código.
+
+Guarda y Render reinicia el servicio. Si Nutty falla, mira **Logs** en Render: cada error de Gemini queda
+registrado con su código y motivo (sin el contenido de las conversaciones ni la llave).
+
+Cada usuario puede mandar hasta 15 mensajes por minuto.

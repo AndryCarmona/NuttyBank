@@ -20,8 +20,8 @@ export function Navigation() {
   const items = ['Inicio', 'Calendario', 'Asistente', 'Movimientos', 'Resumen'];
   return <View style={s.nav}>{items.map((label, i) => {
     const active = (i === 0 && path === '/') || (i === 3 && path.startsWith('/cards'));
-    const disabled = i !== 0 && i !== 3;
-    return <Pressable key={label} accessibilityRole="button" accessibilityLabel={i === 3 ? 'Tarjetas' : label} disabled={disabled} accessibilityState={{ selected: active, disabled }} onPress={() => { router.navigate(i === 3 ? '/cards' as never : '/'); }} style={({ pressed }) => [s.navItem, i === 2 && s.mascotButton, pressed && { opacity: .75 }]}>{i === 2 ? <Image source={require('@/assets/images/nutty-mascot.png')} style={s.mascot} resizeMode="contain" /> : <RaisedTab active={active}><View style={[s.tabSurface, active && s.tabSelected]}><NavigationIcon name={label} /></View><View style={[s.tabDot, { opacity: active ? 1 : 0 }]} /></RaisedTab>}</Pressable>;
+    const disabled = i !== 0 && i !== 2 && i !== 3;
+    return <Pressable key={label} accessibilityRole="button" accessibilityLabel={i === 3 ? 'Tarjetas' : i === 2 ? 'Nutty, el asistente' : label} disabled={disabled} accessibilityState={{ selected: active, disabled }} onPress={() => { router.navigate((i === 3 ? '/cards' : i === 2 ? '/nutty' : '/') as never); }} style={({ pressed }) => [s.navItem, i === 2 && s.mascotButton, pressed && { opacity: .75 }]}>{i === 2 ? <Image source={require('@/assets/images/nutty-mascot.png')} style={s.mascot} resizeMode="contain" /> : <RaisedTab active={active}><View style={[s.tabSurface, active && s.tabSelected]}><NavigationIcon name={label} /></View><View style={[s.tabDot, { opacity: active ? 1 : 0 }]} /></RaisedTab>}</Pressable>;
   })}</View>;
 }
 export function Summary({ onPress }: { onPress?: () => void }) {
