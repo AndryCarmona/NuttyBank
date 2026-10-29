@@ -31,7 +31,7 @@ export default function RootLayout() {
   const [queryClient] = useState(() => new QueryClient({ defaultOptions: { queries: { retry: 1 } } }));
 
   return (
-    <KeyboardProvider>
+    <KeyboardProvider statusBarTranslucent>
       <ThemeProvider value={navigationTheme}>
         <QueryClientProvider client={queryClient}>
           <AuthProvider>

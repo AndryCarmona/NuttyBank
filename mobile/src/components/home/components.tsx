@@ -1,19 +1,21 @@
-import RaisedTab from './RaisedTab';
+import { KeyboardAwareScrollView, useKeyboardState } from 'react-native-keyboard-controller';
+import RaisedTab from '@/components/home/RaisedTab';
 import { PropsWithChildren } from 'react';
-import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { router, usePathname } from 'expo-router';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
-import { colors as c, money, transactions } from './data';
-import { NavigationIcon } from './NavigationIcon';
+import { colors as c, money, transactions } from '@/components/home/data';
+import { NavigationIcon } from '@/components/home/NavigationIcon';
 
 export function Button({ label, onPress, selected = false }: { label: string; onPress: () => void; selected?: boolean }) {
   return <Pressable accessibilityRole="button" accessibilityState={{ selected }} onPress={onPress} style={({ pressed }) => [s.pill, selected && s.selected, pressed && { opacity: .65 }]}><Text style={[s.small, selected && { color: 'white' }]}>{label}</Text></Pressable>;
 }
 export function Page({ children, title, green = false }: PropsWithChildren<{ title?: string; green?: boolean }>) {
   const insets = useSafeAreaInsets();
-  return <SafeAreaView edges={['top', 'left', 'right']} style={[s.safe, green && { backgroundColor: c.green }]}><View style={s.frame}><ScrollView contentContainerStyle={{ paddingBottom: 30 }} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
+  const keyboardVisible = useKeyboardState(state => state.isVisible);
+  return <SafeAreaView edges={['top', 'left', 'right']} style={[s.safe, green && { backgroundColor: c.green }]}><View style={s.frame}><KeyboardAwareScrollView style={s.scroll} contentContainerStyle={[s.scrollContent, green && { backgroundColor: c.green }]} bottomOffset={24} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled" keyboardDismissMode="on-drag">
     {title && <View style={s.header}><Pressable accessibilityRole="button" accessibilityLabel="Volver al inicio" onPress={() => router.canGoBack() ? router.back() : router.replace('/')} style={s.touch}><Text style={{ fontSize: 27, color: c.ink }}>←</Text></Pressable><Text style={s.title}>{title}</Text><View style={s.touch}><NavigationIcon name="Notificaciones" /></View></View>}
-    {children}</ScrollView><Navigation /><View style={{ height: insets.bottom, backgroundColor: c.panel }} /></View></SafeAreaView>;
+    {children}</KeyboardAwareScrollView><View pointerEvents={keyboardVisible ? "none" : "auto"} accessibilityElementsHidden={keyboardVisible} importantForAccessibility={keyboardVisible ? "no-hide-descendants" : "auto"} style={keyboardVisible ? s.hiddenNavigation : undefined}><Navigation /><View style={{ height: insets.bottom, backgroundColor: c.panel }} /></View></View></SafeAreaView>;
 }
 export function Navigation() {
   const path = usePathname();
@@ -21,7 +23,7 @@ export function Navigation() {
   return <View style={s.nav}>{items.map((label, i) => {
     const active = (i === 0 && path === '/') || (i === 3 && path.startsWith('/cards'));
     const disabled = i !== 0 && i !== 3;
-    return <Pressable key={label} accessibilityRole="button" accessibilityLabel={i === 3 ? 'Tarjetas' : label} disabled={disabled} accessibilityState={{ selected: active, disabled }} onPress={() => { router.navigate(i === 3 ? '/cards' as never : '/'); }} style={({ pressed }) => [s.navItem, i === 2 && s.mascotButton, pressed && { opacity: .75 }]}>{i === 2 ? <Image source={require('@/assets/images/nutty-mascot.png')} style={s.mascot} resizeMode="contain" /> : <RaisedTab active={active}><View style={[s.tabSurface, active && s.tabSelected]}><NavigationIcon name={label} /></View><View style={[s.tabDot, { opacity: active ? 1 : 0 }]} /></RaisedTab>}</Pressable>;
+    return <Pressable key={label} accessibilityRole="button" accessibilityLabel={i === 3 ? 'Tarjetas' : label} disabled={disabled} accessibilityState={{ selected: active, disabled }} onPress={() => { router.navigate(i === 3 ? '/cards' : '/'); }} style={({ pressed }) => [s.navItem, i === 2 && s.mascotButton, pressed && { opacity: .75 }]}>{i === 2 ? <Image source={require('@/assets/images/nutty-mascot.png')} style={s.mascot} resizeMode="contain" /> : <RaisedTab active={active}><View style={[s.tabSurface, active && s.tabSelected]}><NavigationIcon name={label} /></View><View style={[s.tabDot, { opacity: active ? 1 : 0 }]} /></RaisedTab>}</Pressable>;
   })}</View>;
 }
 export function Summary({ onPress }: { onPress?: () => void }) {
@@ -32,6 +34,9 @@ export function TransactionList({ items = transactions, month = 'Abr', empty = '
   return <View style={{ gap: 19, paddingVertical: 18 }}>{items.length === 0 && <Text style={s.empty}>{empty}</Text>}{items.map(t => <View key={t.id} style={s.transaction}><View style={[s.transactionIcon, { backgroundColor: t.color }]}><NavigationIcon name={t.category} /></View><View style={{ flex: 1 }}><Text style={s.transactionName}>{t.name}</Text><Text style={s.detail}>{t.time} · {t.day} {month}</Text></View><Text style={s.category}>{t.category}</Text><Text style={s.amount}>{money(t.amount)}</Text></View>)}</View>;
 }
 export const s = StyleSheet.create({
+  scroll: { flex: 1, backgroundColor: c.paper },
+  scrollContent: { flexGrow: 1 },
+  hiddenNavigation: { position: 'absolute', bottom: 0, left: 0, right: 0, opacity: 0 },
   summaryTitle: { fontSize: 16, fontWeight: '700', color: c.ink },
   summaryContent: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   summaryLine: { flexDirection: 'row', alignItems: 'center', gap: 6 },
@@ -39,9 +44,9 @@ export const s = StyleSheet.create({
   tabSurface: { borderRadius: 20, padding: 3, borderWidth: 2, borderColor: 'transparent' },
   tabSelected: { backgroundColor: c.green, borderColor: c.paper, elevation: 4, shadowColor: '#314B35', shadowOffset: { width: 0, height: 3 }, shadowOpacity: .18, shadowRadius: 5 },
   tabDot: { width: 5, height: 5, borderRadius: 3, backgroundColor: '#527A59', marginTop: 5 },
-  safe: { flex: 1, backgroundColor: c.paper }, frame: { flex: 1, width: '100%', maxWidth: 540, alignSelf: 'center' },
+  safe: { flex: 1, backgroundColor: c.paper }, frame: { flex: 1, width: '100%', maxWidth: 540, alignSelf: 'center', backgroundColor: c.paper },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 18, paddingTop: 18, paddingBottom: 54 }, title: { fontSize: 17, fontWeight: '700', color: c.ink }, touch: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
-  body: { backgroundColor: c.paper, borderTopLeftRadius: 48, borderTopRightRadius: 48, padding: 28, minHeight: 480 },
+  body: { backgroundColor: c.paper, borderTopLeftRadius: 48, borderTopRightRadius: 48, padding: 24, paddingBottom: 38, flexGrow: 1 },
   small: { fontSize: 12, color: c.ink }, bold: { fontSize: 17, fontWeight: '700', color: c.ink },
   summary: { borderRadius: 28, backgroundColor: c.panel, padding: 23, gap: 18, minHeight: 146 }, savings: { flex: 1, alignItems: 'center', gap: 8, borderRightWidth: 1, borderRightColor: '#B9C4BC', paddingRight: 10 }, summaryRight: { flex: 1.6, gap: 10 }, divider: { height: 1, backgroundColor: '#D5DADD' },
   pill: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: c.green, paddingHorizontal: 10, paddingVertical: 11, borderRadius: 19, minHeight: 42 }, selected: { backgroundColor: c.ink },
