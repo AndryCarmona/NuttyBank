@@ -13,9 +13,33 @@ export function Button({ label, onPress, selected = false }: { label: string; on
 export function Page({ children, title, green = false }: PropsWithChildren<{ title?: string; green?: boolean }>) {
   const insets = useSafeAreaInsets();
   const keyboardVisible = useKeyboardState(state => state.isVisible);
-  return <SafeAreaView edges={['top', 'left', 'right']} style={[s.safe, green && { backgroundColor: c.green }]}><View style={s.frame}><KeyboardAwareScrollView style={s.scroll} contentContainerStyle={[s.scrollContent, green && { backgroundColor: c.green }]} bottomOffset={24} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled" keyboardDismissMode="on-drag">
-    {title && <View style={s.header}><Pressable accessibilityRole="button" accessibilityLabel="Volver al inicio" onPress={() => router.canGoBack() ? router.back() : router.replace('/')} style={s.touch}><Text style={{ fontSize: 27, color: c.ink }}>←</Text></Pressable><Text style={s.title}>{title}</Text><View style={s.touch}><NavigationIcon name="Notificaciones" /></View></View>}
-    {children}</KeyboardAwareScrollView><View pointerEvents={keyboardVisible ? "none" : "auto"} accessibilityElementsHidden={keyboardVisible} importantForAccessibility={keyboardVisible ? "no-hide-descendants" : "auto"} style={keyboardVisible ? s.hiddenNavigation : undefined}><Navigation /><View style={{ height: insets.bottom, backgroundColor: c.panel }} /></View></View></SafeAreaView>;
+  const backgroundColor = green ? c.green : c.paper;
+  return (
+    <SafeAreaView edges={['left', 'right']} style={[s.safe, { backgroundColor }]}>
+      {/* Esta zona no se desplaza: conserva el color detrás de la hora. */}
+      <View pointerEvents="none" style={{ height: insets.top, backgroundColor, flexShrink: 0 }} />
+      <View style={s.frame}>
+        <KeyboardAwareScrollView
+          style={s.scroll}
+          bounces={false}
+          overScrollMode="never"
+          contentInsetAdjustmentBehavior="never"
+          automaticallyAdjustContentInsets={false}
+          contentContainerStyle={[s.scrollContent, { backgroundColor }]}
+          bottomOffset={24}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="on-drag">
+          {title && <View style={s.header}><Pressable accessibilityRole="button" accessibilityLabel="Volver al inicio" onPress={() => router.canGoBack() ? router.back() : router.replace('/')} style={s.touch}><Text style={{ fontSize: 27, color: c.ink }}>←</Text></Pressable><Text style={s.title}>{title}</Text><View style={s.touch}><NavigationIcon name="Notificaciones" /></View></View>}
+          {children}
+        </KeyboardAwareScrollView>
+        <View pointerEvents={keyboardVisible ? 'none' : 'auto'} accessibilityElementsHidden={keyboardVisible} importantForAccessibility={keyboardVisible ? 'no-hide-descendants' : 'auto'} style={keyboardVisible ? s.hiddenNavigation : undefined}>
+          <Navigation />
+          <View style={{ height: insets.bottom, backgroundColor: c.panel }} />
+        </View>
+      </View>
+    </SafeAreaView>
+  );
 }
 export function Navigation() {
   const path = usePathname();
