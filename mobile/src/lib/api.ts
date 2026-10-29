@@ -89,11 +89,31 @@ export function fetchMe(): Promise<Me> {
 
 export type ChatMessage = { role: 'user' | 'assistant'; content: string };
 
+type SpendSummary = {
+  expenses_total: number;
+  expenses_count: number;
+  small_expenses_total: number;
+  small_expenses_count: number;
+};
+
+/** Resumen de las finanzas del usuario que se le da a Nutty (mismo formato que espera el backend). */
+export type FinanceContext = {
+  period_days: number;
+  small_threshold: number;
+  income_total: number;
+  expenses_total: number;
+  cards: (SpendSummary & { bank: string; kind: 'Débito' | 'Crédito'; balance: number; limit: number })[];
+  cash: SpendSummary | null;
+  categories: { category: string; total: number; count: number }[];
+  repeated_small: { concept: string; category: string; source: string; count: number; total: number }[];
+  goals: { name: string; target: number; saved: number }[];
+};
+
 /** Manda el historial a Nutty (vía el backend, que habla con Gemini) y devuelve su respuesta. */
-export async function sendChat(messages: ChatMessage[]): Promise<string> {
+export async function sendChat(messages: ChatMessage[], context?: FinanceContext): Promise<string> {
   const data = await apiFetch<{ reply: string }>('/chat', {
     method: 'POST',
-    body: { messages },
+    body: context ? { messages, context } : { messages },
     timeoutMs: CHAT_TIMEOUT_MS,
   });
   return data.reply;
