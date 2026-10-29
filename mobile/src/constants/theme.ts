@@ -7,13 +7,19 @@ import '@/global.css';
 
 import { Platform } from 'react-native';
 
+// Paleta de NuttyBank, tomada del mockup (Figma).
+// Por ahora la app usa SIEMPRE la paleta `light` (ver hooks/use-color-scheme.ts);
+// la `dark` queda lista para cuando se diseñe el modo oscuro de Ajustes.
 export const Colors = {
   light: {
-    text: '#000000',
-    background: '#ffffff',
-    backgroundElement: '#F0F0F3',
-    backgroundSelected: '#E0E1E6',
-    textSecondary: '#60646C',
+    text: '#1E242B',
+    background: '#FAF9F6', // crema: fondo de pantallas
+    backgroundElement: '#F0F2F5', // campos de texto y tarjetas claras
+    backgroundSelected: '#E1E4E8',
+    textSecondary: '#5A636B',
+    primary: '#6C757D', // botones (gris pizarra del mockup)
+    brand: '#7BA47E', // verde: panel de formularios
+    danger: '#B42318',
   },
   dark: {
     text: '#ffffff',
@@ -21,7 +27,19 @@ export const Colors = {
     backgroundElement: '#212225',
     backgroundSelected: '#2E3135',
     textSecondary: '#B0B4BA',
+    primary: '#8A939B',
+    brand: '#5E8A61',
+    danger: '#F97066',
   },
+} as const;
+
+// Tipografía del mockup: Poppins. Cada peso es una familia distinta porque en
+// Android `fontWeight` no elige variantes de una fuente personalizada.
+export const Poppins = {
+  regular: 'Poppins_400Regular',
+  medium: 'Poppins_500Medium',
+  semibold: 'Poppins_600SemiBold',
+  bold: 'Poppins_700Bold',
 } as const;
 
 export type ThemeColor = keyof typeof Colors.light & keyof typeof Colors.dark;

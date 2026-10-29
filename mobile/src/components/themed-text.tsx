@@ -1,6 +1,6 @@
 import { Platform, StyleSheet, Text, type TextProps } from 'react-native';
 
-import { Fonts, ThemeColor } from '@/constants/theme';
+import { Fonts, Poppins, ThemeColor } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 
 export type ThemedTextProps = TextProps & {
@@ -30,37 +30,40 @@ export function ThemedText({ style, type = 'default', themeColor, ...rest }: The
   );
 }
 
+// Cada peso de Poppins es una familia aparte, por eso no se usa `fontWeight`.
 const styles = StyleSheet.create({
   small: {
+    fontFamily: Poppins.medium,
     fontSize: 14,
-    lineHeight: 20,
-    fontWeight: 500,
+    lineHeight: 21,
   },
   smallBold: {
+    fontFamily: Poppins.bold,
     fontSize: 14,
-    lineHeight: 20,
-    fontWeight: 700,
+    lineHeight: 21,
   },
   default: {
+    fontFamily: Poppins.medium,
     fontSize: 16,
     lineHeight: 24,
-    fontWeight: 500,
   },
   title: {
-    fontSize: 48,
-    fontWeight: 600,
-    lineHeight: 52,
+    fontFamily: Poppins.semibold,
+    fontSize: 40,
+    lineHeight: 48,
   },
   subtitle: {
-    fontSize: 32,
-    lineHeight: 44,
-    fontWeight: 600,
+    fontFamily: Poppins.semibold,
+    fontSize: 28,
+    lineHeight: 38,
   },
   link: {
+    fontFamily: Poppins.medium,
     lineHeight: 30,
     fontSize: 14,
   },
   linkPrimary: {
+    fontFamily: Poppins.medium,
     lineHeight: 30,
     fontSize: 14,
     color: '#3c87f7',
