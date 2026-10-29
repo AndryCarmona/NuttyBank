@@ -2,6 +2,7 @@ import { SymbolView } from 'expo-symbols';
 import { View } from 'react-native';
 import { colors } from './data';
 const icons = {
+  Fecha: { ios: 'calendar', android: 'calendar_month', web: 'calendar_month' },
   Salud: { ios: 'pills', android: 'medication', web: 'medication' },
   Regalos: { ios: 'gift', android: 'redeem', web: 'redeem' },
   Ahorros: { ios: 'banknote', android: 'savings', web: 'savings' },
@@ -18,6 +19,6 @@ const icons = {
   Transporte: { ios: 'bus', android: 'directions_bus', web: 'directions_bus' },
   Pagos: { ios: 'receipt', android: 'receipt_long', web: 'receipt_long' },
 } as const;
-export function NavigationIcon({ name, active = false }: { name: string; active?: boolean }) {
-  return <View style={{ width: 40, height: 40, borderRadius: 16, alignItems: 'center', justifyContent: 'center', backgroundColor: active ? colors.green : 'transparent' }}><SymbolView name={icons[name as keyof typeof icons] ?? icons.Resumen} size={25} tintColor={colors.ink} /></View>;
+export function NavigationIcon({ name, active = false, size = 25 }: { name: string; active?: boolean; size?: number }) {
+  return <View style={{ width: Math.max(40, size + 16), height: Math.max(40, size + 16), borderRadius: 16, alignItems: 'center', justifyContent: 'center', backgroundColor: active ? colors.green : 'transparent' }}><SymbolView name={icons[name as keyof typeof icons] ?? icons.Resumen} size={size} tintColor={colors.ink} /></View>;
 }
