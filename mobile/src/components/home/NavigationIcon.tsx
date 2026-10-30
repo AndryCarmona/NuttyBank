@@ -2,6 +2,8 @@ import { SymbolView } from 'expo-symbols';
 import { View } from 'react-native';
 import { colors } from '@/components/home/data';
 const icons = {
+  Perfil: { ios: 'person', android: 'person', web: 'person' },
+  CerrarSesion: { ios: 'rectangle.portrait.and.arrow.right', android: 'logout', web: 'logout' },
   Puntaje: { ios: 'medal', android: 'workspace_premium', web: 'workspace_premium' },
   Viaje: { ios: 'airplane', android: 'flight', web: 'flight' },
   Casa: { ios: 'house', android: 'home', web: 'home' },

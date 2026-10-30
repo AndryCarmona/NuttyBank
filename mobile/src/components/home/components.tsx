@@ -10,11 +10,9 @@ import { NavigationIcon } from '@/components/home/NavigationIcon';
 export function Button({ label, onPress, selected = false }: { label: string; onPress: () => void; selected?: boolean }) {
   return <Pressable accessibilityRole="button" accessibilityState={{ selected }} onPress={onPress} style={({ pressed }) => [s.pill, selected && s.selected, pressed && { opacity: .65 }]}><Text style={[s.small, selected && { color: 'white' }]}>{label}</Text></Pressable>;
 }
-// Espacio que el contenido deja abajo para que la barra flotante no tape lo último de la pantalla.
-const NAV_SPACE = 112;
 export function Page({ children, title, green = false }: PropsWithChildren<{ title?: string; green?: boolean }>) {
   const insets = useSafeAreaInsets();
-  const keyboardVisible = useKeyboardState(state => state.isVisible);
+  const clearance = useNavigationClearance();
   const backgroundColor = green ? c.green : c.paper;
   return (
     <SafeAreaView edges={['left', 'right']} style={[s.safe, { backgroundColor }]}>
@@ -35,33 +33,32 @@ export function Page({ children, title, green = false }: PropsWithChildren<{ tit
           {title && <View style={s.header}><Pressable accessibilityRole="button" accessibilityLabel="Volver al inicio" onPress={() => router.canGoBack() ? router.back() : router.replace('/')} style={s.touch}><Text style={{ fontSize: 27, color: c.ink }}>←</Text></Pressable><Text style={s.title}>{title}</Text><View style={s.touch}><NavigationIcon name="Notificaciones" /></View></View>}
           {children}
           {/* Deja libre el espacio de la barra flotante, con el mismo color del cuerpo de la pantalla. */}
-          <View style={{ height: NAV_SPACE + insets.bottom, backgroundColor: c.paper, flexShrink: 0 }} />
+          <View style={{ height: clearance, backgroundColor: c.paper, flexShrink: 0 }} />
         </KeyboardAwareScrollView>
-        {/* Barra flotante: no ocupa espacio en la pantalla, se dibuja encima del contenido. */}
-        <View pointerEvents={keyboardVisible ? 'none' : 'box-none'} accessibilityElementsHidden={keyboardVisible} importantForAccessibility={keyboardVisible ? 'no-hide-descendants' : 'auto'} style={[s.floatingNav, { bottom: insets.bottom + 12 }, keyboardVisible && s.hiddenNavigation]}>
-          <Navigation />
-        </View>
+        <Navigation />
       </View>
     </SafeAreaView>
   );
 }
-// Misma barra flotante para pantallas que no usan `Page` (p. ej. las lecciones): va al final de la
-// pantalla, con márgenes a los lados y el espacio seguro inferior, sobre el color del cuerpo.
-export function DockedNavigation() {
+// Espacio que el contenido deja abajo para que la barra flotante no tape lo último de la pantalla.
+export function useNavigationClearance() {
   const insets = useSafeAreaInsets();
-  return <View style={{ paddingHorizontal: 16, paddingTop: 16, paddingBottom: insets.bottom + 12, backgroundColor: c.paper }}><Navigation /></View>;
+  return 108 + Math.max(insets.bottom, 12);
 }
 export function Navigation() {
   const path = usePathname();
   const params = useLocalSearchParams<{ lesson?: string }>();
   // Dentro de una lección el botón de Nutty repasa la lección; en el resto abre el chat de Nutty.
   const inLesson = path.startsWith('/learn') && !!params.lesson;
-  const items = ['Inicio', 'Calendario', 'Asistente', 'Movimientos', 'Resumen'];
-  return <View style={s.nav}>{items.map((label, i) => {
-    const active = (i === 0 && path === '/') || (i === 1 && path.startsWith('/learn')) || (i === 3 && path.startsWith('/cards'));
-    const disabled = i === 4;
-    return <Pressable key={label} accessibilityRole="button" accessibilityLabel={i === 3 ? 'Tarjetas' : i === 1 ? 'Aprende' : i === 2 ? (inLesson ? 'Repasar con Nutty' : 'Nutty, el asistente') : label} disabled={disabled} accessibilityState={{ selected: active, disabled }} onPress={() => { if (i === 2 && inLesson) router.setParams({ view: 'nutty' }); else router.navigate((i === 3 ? '/cards' : i === 2 ? '/nutty' : i === 1 ? '/learn' : '/') as never); }} style={({ pressed }) => [s.navItem, i === 2 && s.mascotButton, pressed && { opacity: .75 }]}>{i === 2 ? <Image source={require('@/assets/images/nutty-mascot.png')} style={s.mascot} resizeMode="contain" /> : <RaisedTab active={active}><View style={[s.tabSurface, active && s.tabSelected]}><NavigationIcon name={label} /></View><View style={[s.tabDot, { opacity: active ? 1 : 0 }]} /></RaisedTab>}</Pressable>;
-  })}</View>;
+  const insets = useSafeAreaInsets();
+  const keyboardVisible = useKeyboardState(state => state.isVisible);
+  const items = ['Inicio', 'Calendario', 'Asistente', 'Movimientos', 'Perfil'];
+  // Barra flotante: se posiciona sola sobre el contenido y se oculta mientras el teclado está abierto.
+  return <View pointerEvents={keyboardVisible ? 'none' : 'box-none'} accessibilityElementsHidden={keyboardVisible} importantForAccessibility={keyboardVisible ? 'no-hide-descendants' : 'auto'} style={[s.navSurround, { bottom: insets.bottom + 12 }, keyboardVisible && s.hiddenNavigation]}><View style={s.nav}>{items.map((label, i) => {
+    const active = (i === 0 && path === '/') || (i === 1 && path.startsWith('/learn')) || (i === 3 && path.startsWith('/cards')) || (i === 4 && path.startsWith('/profile'));
+    const disabled = false;
+    return <Pressable key={label} accessibilityRole="button" accessibilityLabel={i === 3 ? 'Tarjetas' : i === 1 ? 'Aprende' : i === 2 ? (inLesson ? 'Repasar con Nutty' : 'Nutty, el asistente') : label} disabled={disabled} accessibilityState={{ selected: active, disabled }} onPress={() => { if (i === 2 && inLesson) router.setParams({ view: 'nutty' }); else router.navigate((i === 3 ? '/cards' : i === 2 ? '/nutty' : i === 1 ? '/learn' : i === 4 ? '/profile' : '/') as never); }} style={({ pressed }) => [s.navItem, i === 2 && s.mascotButton, pressed && { opacity: .75 }]}>{i === 2 ? <Image source={require('@/assets/images/nutty-mascot.png')} style={s.mascot} resizeMode="contain" /> : <RaisedTab active={active}><View style={[s.tabSurface, active && s.tabSelected]}><NavigationIcon name={label} /></View><View style={[s.tabDot, { opacity: active ? 1 : 0 }]} /></RaisedTab>}</Pressable>;
+  })}</View></View>;
 }
 export function Summary({ onPress }: { onPress?: () => void }) {
   const content = <><Text accessibilityRole="header" style={s.summaryTitle}>Análisis rápido</Text><View style={s.summaryContent}><View style={s.savings}><Text style={{ fontSize: 37 }}>🐷</Text><Text style={s.small}>Ahorros</Text></View><View style={s.summaryRight}><View style={s.summaryLine}><View style={s.summaryIcon}><NavigationIcon name="Ingresos" size={23} /></View><View style={{ flex: 1 }}><Text style={s.small}>Ingresos sem.</Text><Text style={s.bold}>{money(4000)}</Text></View></View><View style={s.divider} /><View style={s.summaryLine}><View style={s.summaryIcon}><NavigationIcon name="Comida" size={23} /></View><View style={{ flex: 1 }}><Text style={s.small}>Comida semanal</Text><Text style={s.bold}>{money(-100)}</Text></View></View></View></View></>;
@@ -73,7 +70,6 @@ export function TransactionList({ items = transactions, month = 'Abr', empty = '
 export const s = StyleSheet.create({
   scroll: { flex: 1, backgroundColor: c.paper },
   scrollContent: { flexGrow: 1 },
-  floatingNav: { position: 'absolute', left: 16, right: 16 },
   hiddenNavigation: { opacity: 0 },
   summaryTitle: { fontSize: 16, fontWeight: '700', color: c.ink },
   summaryContent: { flexDirection: 'row', alignItems: 'center', gap: 12 },
@@ -88,7 +84,8 @@ export const s = StyleSheet.create({
   small: { fontSize: 12, color: c.ink }, bold: { fontSize: 17, fontWeight: '700', color: c.ink },
   summary: { borderRadius: 28, backgroundColor: c.panel, padding: 23, gap: 18, minHeight: 146 }, savings: { flex: 1, alignItems: 'center', gap: 8, borderRightWidth: 1, borderRightColor: '#B9C4BC', paddingRight: 10 }, summaryRight: { flex: 1.6, gap: 10 }, divider: { height: 1, backgroundColor: '#D5DADD' },
   pill: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: c.green, paddingHorizontal: 10, paddingVertical: 11, borderRadius: 19, minHeight: 42 }, selected: { backgroundColor: c.ink },
-  nav: { flexDirection: 'row', backgroundColor: c.panel, borderRadius: 40, paddingHorizontal: 13, paddingVertical: 10, alignItems: 'center', minHeight: 72, borderWidth: 1, borderColor: 'rgba(32,39,45,.06)', elevation: 12, shadowColor: '#20272D', shadowOffset: { width: 0, height: 8 }, shadowOpacity: .18, shadowRadius: 16 }, navItem: { flex: 1, height: 48, justifyContent: 'center', alignItems: 'center' }, navIcon: { fontSize: 32, color: c.ink }, activeIcon: { backgroundColor: c.green, borderRadius: 16, overflow: 'hidden', paddingHorizontal: 8 }, mascotButton: { overflow: 'hidden', borderRadius: 40, backgroundColor: c.green, height: 65, maxWidth: 65, marginTop: -30, borderWidth: 5, borderColor: c.paper }, mascot: { width: 155, height: 100, position: 'absolute', top: -8, left: -56 },
+  navSurround: { position: 'absolute', left: 0, right: 0, paddingHorizontal: 16, alignItems: 'center', backgroundColor: 'transparent', zIndex: 20 },
+  nav: { width: '100%', maxWidth: 508, flexDirection: 'row', backgroundColor: c.panel, borderRadius: 40, paddingHorizontal: 13, paddingVertical: 10, alignItems: 'center', minHeight: 72, borderWidth: 1, borderColor: 'rgba(32,39,45,.06)', elevation: 12, shadowColor: '#20272D', shadowOffset: { width: 0, height: 8 }, shadowOpacity: .18, shadowRadius: 16 }, navItem: { flex: 1, height: 48, justifyContent: 'center', alignItems: 'center' }, navIcon: { fontSize: 32, color: c.ink }, activeIcon: { backgroundColor: c.green, borderRadius: 16, overflow: 'hidden', paddingHorizontal: 8 }, mascotButton: { overflow: 'hidden', borderRadius: 40, backgroundColor: c.green, height: 65, maxWidth: 65, marginTop: -30, borderWidth: 5, borderColor: c.paper }, mascot: { width: 155, height: 100, position: 'absolute', top: -8, left: -56 },
   transaction: { flexDirection: 'row', alignItems: 'center', gap: 10 }, transactionIcon: { width: 45, height: 45, borderRadius: 19, alignItems: 'center', justifyContent: 'center' }, transactionName: { fontSize: 12, fontWeight: '600', color: c.ink }, detail: { fontSize: 10, color: c.muted, marginTop: 6 }, category: { fontSize: 10, color: c.muted, borderLeftWidth: 1, borderLeftColor: '#B9C4BC', paddingLeft: 9, maxWidth: 72 }, amount: { fontSize: 12, fontWeight: '600', color: c.ink, minWidth: 72, textAlign: 'right' }, empty: { textAlign: 'center', color: c.muted, paddingVertical: 24, lineHeight: 22 },
 });
 
