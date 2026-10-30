@@ -48,7 +48,7 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "lint": "expo lint",
-    "test": "node tests/cards-store.cjs && node tests/nutty-format.cjs && node tests/nutty-context.cjs && node tests/nutty-history.cjs && node tests/nutty-questions.cjs && node tests/card-utils.cjs"
+    "test": "node tests/cards-store.cjs && node tests/nutty-format.cjs && node tests/nutty-context.cjs && node tests/nutty-history.cjs && node tests/nutty-questions.cjs && node tests/card-utils.cjs && node tests/learn-content.cjs && node tests/learn-score.cjs"
   },
   "private": true
 }

@@ -2,7 +2,7 @@ import { KeyboardAwareScrollView, useKeyboardState } from 'react-native-keyboard
 import RaisedTab from '@/components/home/RaisedTab';
 import { PropsWithChildren } from 'react';
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
-import { router, usePathname } from 'expo-router';
+import { router, useLocalSearchParams, usePathname } from 'expo-router';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors as c, money, transactions } from '@/components/home/data';
 import { NavigationIcon } from '@/components/home/NavigationIcon';
@@ -45,13 +45,22 @@ export function Page({ children, title, green = false }: PropsWithChildren<{ tit
     </SafeAreaView>
   );
 }
+// Misma barra flotante para pantallas que no usan `Page` (p. ej. las lecciones): va al final de la
+// pantalla, con márgenes a los lados y el espacio seguro inferior, sobre el color del cuerpo.
+export function DockedNavigation() {
+  const insets = useSafeAreaInsets();
+  return <View style={{ paddingHorizontal: 16, paddingTop: 16, paddingBottom: insets.bottom + 12, backgroundColor: c.paper }}><Navigation /></View>;
+}
 export function Navigation() {
   const path = usePathname();
+  const params = useLocalSearchParams<{ lesson?: string }>();
+  // Dentro de una lección el botón de Nutty repasa la lección; en el resto abre el chat de Nutty.
+  const inLesson = path.startsWith('/learn') && !!params.lesson;
   const items = ['Inicio', 'Calendario', 'Asistente', 'Movimientos', 'Resumen'];
   return <View style={s.nav}>{items.map((label, i) => {
-    const active = (i === 0 && path === '/') || (i === 3 && path.startsWith('/cards'));
-    const disabled = i !== 0 && i !== 2 && i !== 3;
-    return <Pressable key={label} accessibilityRole="button" accessibilityLabel={i === 3 ? 'Tarjetas' : i === 2 ? 'Nutty, el asistente' : label} disabled={disabled} accessibilityState={{ selected: active, disabled }} onPress={() => { router.navigate((i === 3 ? '/cards' : i === 2 ? '/nutty' : '/') as never); }} style={({ pressed }) => [s.navItem, i === 2 && s.mascotButton, pressed && { opacity: .75 }]}>{i === 2 ? <Image source={require('@/assets/images/nutty-mascot.png')} style={s.mascot} resizeMode="contain" /> : <RaisedTab active={active}><View style={[s.tabSurface, active && s.tabSelected]}><NavigationIcon name={label} /></View><View style={[s.tabDot, { opacity: active ? 1 : 0 }]} /></RaisedTab>}</Pressable>;
+    const active = (i === 0 && path === '/') || (i === 1 && path.startsWith('/learn')) || (i === 3 && path.startsWith('/cards'));
+    const disabled = i === 4;
+    return <Pressable key={label} accessibilityRole="button" accessibilityLabel={i === 3 ? 'Tarjetas' : i === 1 ? 'Aprende' : i === 2 ? (inLesson ? 'Repasar con Nutty' : 'Nutty, el asistente') : label} disabled={disabled} accessibilityState={{ selected: active, disabled }} onPress={() => { if (i === 2 && inLesson) router.setParams({ view: 'nutty' }); else router.navigate((i === 3 ? '/cards' : i === 2 ? '/nutty' : i === 1 ? '/learn' : '/') as never); }} style={({ pressed }) => [s.navItem, i === 2 && s.mascotButton, pressed && { opacity: .75 }]}>{i === 2 ? <Image source={require('@/assets/images/nutty-mascot.png')} style={s.mascot} resizeMode="contain" /> : <RaisedTab active={active}><View style={[s.tabSurface, active && s.tabSelected]}><NavigationIcon name={label} /></View><View style={[s.tabDot, { opacity: active ? 1 : 0 }]} /></RaisedTab>}</Pressable>;
   })}</View>;
 }
 export function Summary({ onPress }: { onPress?: () => void }) {

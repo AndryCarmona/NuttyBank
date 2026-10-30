@@ -9,26 +9,29 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { DefaultTheme, Stack, ThemeProvider, usePathname } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
-import { useState } from 'react';
+import * as SystemUI from 'expo-system-ui';
+import { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
 
 import { AnimatedSplashOverlay } from '@/components/animated-icon';
+import { screenBackground } from '@/components/home/ScreenSurface';
 import { colors } from '@/components/home/data';
 import { ThemedView } from '@/components/themed-view';
-import { Colors, Poppins } from '@/constants/theme';
+import { Poppins } from '@/constants/theme';
 import { AuthProvider, useAuth } from '@/context/auth-context';
 
 SplashScreen.preventAutoHideAsync();
+// Pinta también el contenedor nativo, antes de que se monte la navegación.
+void SystemUI.setBackgroundColorAsync(colors.green).catch(error => console.warn('No se pudo aplicar el fondo nativo.', error));
 
 export default function RootLayout() {
   const pathname = usePathname();
-  const greenHeader = pathname === '/' || pathname === '/cards' || pathname.startsWith('/cards/') || pathname === '/home/calendar';
-  const backgroundColor = greenHeader ? colors.green : Colors.light.background;
-  const navigationTheme = {
-    ...DefaultTheme,
-    colors: { ...DefaultTheme.colors, background: backgroundColor },
-  };
+  const backgroundColor = screenBackground(pathname);
+  useEffect(() => {
+    void SystemUI.setBackgroundColorAsync(backgroundColor).catch(error => console.warn('No se pudo actualizar el fondo nativo.', error));
+  }, [backgroundColor]);
+  const navigationTheme = { ...DefaultTheme, colors: { ...DefaultTheme.colors, background: backgroundColor } };
   // Un solo QueryClient por montaje de la app (consulta y caché de datos del backend).
   const [queryClient] = useState(() => new QueryClient({ defaultOptions: { queries: { retry: 1 } } }));
 
@@ -50,6 +53,7 @@ export default function RootLayout() {
 }
 
 function RootNavigator() {
+  const pathname = usePathname();
   const { session, loading } = useAuth();
   const [fontsLoaded, fontError] = useFonts({
     [Poppins.regular]: Poppins_400Regular,
@@ -66,7 +70,7 @@ function RootNavigator() {
   // Con sesión solo existe el grupo (app); sin sesión, solo el grupo (auth).
   // Expo Router redirige solo cuando la sesión cambia (iniciar o cerrar sesión).
   return (
-    <Stack screenOptions={{ headerShown: false, animation: 'fade', animationDuration: 200 }}>
+    <Stack screenOptions={{ headerShown: false, animation: 'fade', animationDuration: 200, statusBarStyle: 'dark', statusBarTranslucent: true, contentStyle: { backgroundColor: screenBackground(pathname) } }}>
       <Stack.Protected guard={!!session} redirectTo="/login">
         <Stack.Screen name="(app)" />
       </Stack.Protected>

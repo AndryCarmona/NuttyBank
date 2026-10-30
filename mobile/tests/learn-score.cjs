@@ -1,0 +1,58 @@
+const fs = require('node:fs');
+const ts = require('typescript');
+const assert = require('node:assert/strict');
+const lessons = require('../src/components/learn/lessons.json');
+const source = fs.readFileSync(require.resolve('../src/components/learn/progress.ts'), 'utf8');
+const logic = source.slice(source.indexOf('export const MAX_QUIZZES'), source.indexOf('export function useLearningProgress'));
+const compiled = ts.transpileModule(logic, { compilerOptions: { module: ts.ModuleKind.CommonJS } }).outputText;
+const api = {};
+new Function('exports', 'lessons', compiled)(api, lessons);
+const id = lessons[0].id;
+const correct = lessons[0].questions.map(q => q.correct);
+let attempt = api.mergeAttempt(id, undefined, { answers: correct, completed: true });
+assert.equal(api.learningStats({ [id]: attempt }).points, 50);
+attempt = api.beginQuiz(id, attempt);
+assert.equal(api.learningStats({ [id]: attempt }).points, 50, 'Retaking does not erase previous achievements');
+attempt = api.mergeAttempt(id, attempt, { answers: [0, 0, 1], completed: true });
+assert.equal(api.learningStats({ [id]: attempt }).points, 50, 'Repeating cannot farm points or lower the best score');
+const legacy = { version: 1, answers: correct, step: 0, completed: true };
+assert.equal(api.learningStats({ [id]: legacy }).points, 50, 'Existing progress earns credit');
+assert.equal(api.learningStats({}).points, 0);
+const all = Object.fromEntries(lessons.map(l => [l.id, api.mergeAttempt(l.id, undefined, { answers: l.questions.map(q => q.correct), completed: true })]));
+assert.deepEqual(api.learningStats(all), { completed: 8, correct: 24, points: 400, maximum: 400 });
+assert.equal(api.mergeAttempt(id, attempt, { view: 'quiz', question: 2, page: 1 }).question, 2);
+assert.equal(api.quizHistory(id, attempt).length, 2);
+const firstAnswers = [...attempt.history[0].answers];
+attempt = api.beginQuiz(id, attempt);
+attempt = api.mergeAttempt(id, attempt, { answers: correct, completed: true });
+assert.equal(attempt.history.length, 3);
+assert.deepEqual(attempt.history[0].answers, firstAnswers, 'Earlier submitted answers remain unchanged');
+assert.strictEqual(api.beginQuiz(id, attempt), attempt, 'A fourth attempt is blocked');
+const tampered = api.mergeAttempt(id, attempt, { answers: [0, 0, 0], completed: false });
+assert.equal(tampered.completed, true, 'Submitted quiz cannot be reopened through a normal update');
+assert.equal(tampered.history.length, 3);
+assert.equal(api.quizHistory(id, legacy).length, 1, 'Legacy completion becomes quiz 1');
+assert.deepEqual([1, 2, 3].map(api.quizOrder), [[0, 1, 2], [1, 2, 0], [2, 0, 1]]);
+for (const order of [1, 2, 3].map(api.quizOrder)) assert.deepEqual([...order].sort(), [0, 1, 2]);
+assert.equal(api.mergeAttempt(id, undefined, { answers: [-1, 0, 1], completed: true }).completed, false);
+const restored = JSON.parse(JSON.stringify(attempt));
+assert.equal(api.quizHistory(id, restored).length, 3);
+assert.strictEqual(api.beginQuiz(id, restored), restored, 'Attempt limit survives storage reload');
+assert.equal(api.answerFeedback({ mistakes: 'A: Primera explicación. C: Otra explicación.' }, 2), 'Otra explicación.');
+for (const lesson of lessons.slice(0, 4)) assert.equal(api.isLessonUnlocked(lesson.id, {}), true);
+for (const lesson of lessons.slice(4)) assert.equal(api.isLessonUnlocked(lesson.id, {}), false);
+const fourthDone = { [lessons[3].id]: legacy };
+assert.equal(api.isLessonUnlocked(lessons[4].id, fourthDone), true, 'Lesson 5 requires lesson 4');
+assert.equal(api.isLessonUnlocked(lessons[5].id, fourthDone), false, 'Lesson 6 still requires lesson 5');
+assert.equal(api.isLessonUnlocked(lessons[4].id, { [lessons[3].id]: { ...legacy, completed: false, finishedBefore: true } }), true, 'Retaking the prerequisite does not relock the next lesson');
+assert.equal(api.isLessonUnlocked(lessons[4].id, { [lessons[3].id]: { ...legacy, completed: false } }), false, 'Reading alone is not completion');
+assert.equal(api.isLessonUnlocked('unknown', all), false);
+for (const order of [1, 2, 3].map(api.quizOrder)) {
+  const answers = [-1, -1, -1];
+  for (const questionIndex of order) {
+    const displayed = order.map(optionIndex => ({ original: optionIndex, text: lessons[0].questions[questionIndex].options[optionIndex] }));
+    answers[questionIndex] = displayed.find(option => option.original === correct[questionIndex]).original;
+  }
+  assert.deepEqual(answers, correct, 'Reordering preserves grading by question and option identity');
+}
+console.log('Score, legacy progress, retakes, maximum and resume position passed.');
