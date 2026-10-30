@@ -83,7 +83,7 @@ export default function CardsScreen() {
 const styles = StyleSheet.create({
   categoryHeading: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   addCategoryButton: { width: 44, height: 44, borderRadius: 16, backgroundColor: '#DCE8D6', alignItems: 'center', justifyContent: 'center' },
-  body: { width: '100%', maxWidth: 480, alignSelf: 'center' },
+  body: { width: '100%', alignSelf: 'center' },
   summaryPanel: { width: '88%', maxWidth: 400, alignSelf: 'center', marginTop: -28, marginBottom: 24, padding: 16, borderRadius: 24, backgroundColor: '#FFFFFF24' },
   metric: { flex: 1, minWidth: 0, alignItems: 'center' }, metricTitle: { alignItems: 'center' }, metricDivider: { width: 1, backgroundColor: '#5E8163', marginVertical: 15 },
   progressTrack: { height: 10, backgroundColor: '#F8FAF6', borderRadius: 8, overflow: 'hidden', marginTop: 16 }, progressFill: { height: '100%', backgroundColor: c.ink, borderRadius: 8 }, progressCaption: { fontSize: 10, color: c.ink, textAlign: 'center', marginTop: 9 },

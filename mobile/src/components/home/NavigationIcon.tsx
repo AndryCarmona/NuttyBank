@@ -2,6 +2,7 @@ import { SymbolView } from 'expo-symbols';
 import { View } from 'react-native';
 import { colors } from './data';
 const icons = {
+  Puntaje: { ios: 'medal', android: 'workspace_premium', web: 'workspace_premium' },
   Fecha: { ios: 'calendar', android: 'calendar_month', web: 'calendar_month' },
   Salud: { ios: 'pills', android: 'medication', web: 'medication' },
   Regalos: { ios: 'gift', android: 'redeem', web: 'redeem' },
