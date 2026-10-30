@@ -11,19 +11,24 @@ export function Button({ label, onPress, selected = false }: { label: string; on
   return <Pressable accessibilityRole="button" accessibilityState={{ selected }} onPress={onPress} style={({ pressed }) => [s.pill, selected && s.selected, pressed && { opacity: .65 }]}><Text style={[s.small, selected && { color: 'white' }]}>{label}</Text></Pressable>;
 }
 export function Page({ children, title, green = false }: PropsWithChildren<{ title?: string; green?: boolean }>) {
+  const clearance = useNavigationClearance();
   return <ScreenSurface green={green}><View style={s.frame}><ScrollView style={{ flex: 1, backgroundColor: c.paper }} bounces={false} overScrollMode="never" contentInsetAdjustmentBehavior="never" automaticallyAdjustContentInsets={false} contentContainerStyle={{ flexGrow: 1, backgroundColor: green ? c.green : c.paper }} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
     {title && <View style={s.header}><Pressable accessibilityRole="button" accessibilityLabel="Volver al inicio" onPress={() => router.canGoBack() ? router.back() : router.replace('/')} style={s.touch}><Text style={{ fontSize: 27, color: c.ink }}>←</Text></Pressable><Text style={s.title}>{title}</Text><View style={s.touch}><NavigationIcon name="Notificaciones" /></View></View>}
-    {children}</ScrollView><Navigation /></View></ScreenSurface>;
+    {children}<View style={{ height: clearance, flexShrink: 0, backgroundColor: c.paper }} /></ScrollView><Navigation /></View></ScreenSurface>;
+}
+export function useNavigationClearance() {
+  const insets = useSafeAreaInsets();
+  return 108 + Math.max(insets.bottom, 12);
 }
 export function Navigation() {
   const insets = useSafeAreaInsets();
   const path = usePathname();
   const params = useLocalSearchParams<{ lesson?: string }>();
-  const items = ['Inicio', 'Calendario', 'Asistente', 'Movimientos', 'Resumen'];
-  return <View style={[s.navSurround, { paddingBottom: Math.max(insets.bottom, 12) }]}><View style={s.nav}>{items.map((label, i) => {
-    const active = (i === 0 && path === '/') || (i === 1 && path.startsWith('/learn')) || (i === 3 && path.startsWith('/cards'));
-    const disabled = i === 4 || (i === 2 && (!path.startsWith('/learn') || !params.lesson));
-    return <Pressable key={label} accessibilityRole="button" accessibilityLabel={i === 3 ? 'Tarjetas' : i === 1 ? 'Aprende' : i === 2 ? 'Repasar con Nutty' : label} disabled={disabled} accessibilityState={{ selected: active, disabled }} onPress={() => { if (i === 2) router.setParams({ view: 'nutty' }); else router.navigate((i === 3 ? '/cards' : i === 1 ? '/learn' : '/') as never); }} style={({ pressed }) => [s.navItem, i === 2 && s.mascotButton, pressed && { opacity: .75 }]}>{i === 2 ? <Image source={require('@/assets/images/nutty-mascot.png')} style={s.mascot} resizeMode="contain" /> : <RaisedTab active={active}><View style={[s.tabSurface, active && s.tabSelected]}><NavigationIcon name={label} /></View><View style={[s.tabDot, { opacity: active ? 1 : 0 }]} /></RaisedTab>}</Pressable>;
+  const items = ['Inicio', 'Calendario', 'Asistente', 'Movimientos', 'Perfil'];
+  return <View pointerEvents="box-none" style={[s.navSurround, { bottom: Math.max(insets.bottom, 12) }]}><View style={s.nav}>{items.map((label, i) => {
+    const active = (i === 0 && path === '/') || (i === 1 && path.startsWith('/learn')) || (i === 3 && path.startsWith('/cards')) || (i === 4 && path.startsWith('/profile'));
+    const disabled = (i === 2 && (!path.startsWith('/learn') || !params.lesson));
+    return <Pressable key={label} accessibilityRole="button" accessibilityLabel={i === 3 ? 'Tarjetas' : i === 1 ? 'Aprende' : i === 2 ? 'Repasar con Nutty' : label} disabled={disabled} accessibilityState={{ selected: active, disabled }} onPress={() => { if (i === 2) router.setParams({ view: 'nutty' }); else router.navigate((i === 3 ? '/cards' : i === 1 ? '/learn' : i === 4 ? '/profile' : '/') as never); }} style={({ pressed }) => [s.navItem, i === 2 && s.mascotButton, pressed && { opacity: .75 }]}>{i === 2 ? <Image source={require('@/assets/images/nutty-mascot.png')} style={s.mascot} resizeMode="contain" /> : <RaisedTab active={active}><View style={[s.tabSurface, active && s.tabSelected]}><NavigationIcon name={label} /></View><View style={[s.tabDot, { opacity: active ? 1 : 0 }]} /></RaisedTab>}</Pressable>;
   })}</View></View>;
 }
 export function Summary({ onPress }: { onPress?: () => void }) {
@@ -47,8 +52,8 @@ export const s = StyleSheet.create({
   small: { fontSize: 12, color: c.ink }, bold: { fontSize: 17, fontWeight: '700', color: c.ink },
   summary: { borderRadius: 28, backgroundColor: c.panel, padding: 23, gap: 18, minHeight: 146 }, savings: { flex: 1, alignItems: 'center', gap: 8, borderRightWidth: 1, borderRightColor: '#B9C4BC', paddingRight: 10 }, summaryRight: { flex: 1.6, gap: 10 }, divider: { height: 1, backgroundColor: '#D5DADD' },
   pill: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: c.green, paddingHorizontal: 10, paddingVertical: 11, borderRadius: 19, minHeight: 42 }, selected: { backgroundColor: c.ink },
-  navSurround: { paddingTop: 16, paddingHorizontal: 12, backgroundColor: c.paper },
-  nav: { flexDirection: 'row', backgroundColor: c.panel, borderRadius: 38, paddingHorizontal: 13, paddingTop: 10, paddingBottom: 8, alignItems: 'center', minHeight: 76 }, navItem: { flex: 1, height: 48, justifyContent: 'center', alignItems: 'center' }, navIcon: { fontSize: 32, color: c.ink }, activeIcon: { backgroundColor: c.green, borderRadius: 16, overflow: 'hidden', paddingHorizontal: 8 }, mascotButton: { overflow: 'hidden', borderRadius: 40, backgroundColor: c.green, height: 65, maxWidth: 65, marginTop: -30, borderWidth: 5, borderColor: c.paper }, mascot: { width: 155, height: 100, position: 'absolute', top: -8, left: -56 },
+  navSurround: { position: 'absolute', left: 0, right: 0, paddingHorizontal: 16, alignItems: 'center', backgroundColor: 'transparent', zIndex: 20 },
+  nav: { width: '100%', maxWidth: 508, flexDirection: 'row', backgroundColor: c.panel, borderRadius: 38, paddingHorizontal: 13, paddingTop: 10, paddingBottom: 8, alignItems: 'center', minHeight: 76, elevation: 8, shadowColor: '#20272D', shadowOffset: { width: 0, height: 5 }, shadowOpacity: .14, shadowRadius: 12 }, navItem: { flex: 1, height: 48, justifyContent: 'center', alignItems: 'center' }, navIcon: { fontSize: 32, color: c.ink }, activeIcon: { backgroundColor: c.green, borderRadius: 16, overflow: 'hidden', paddingHorizontal: 8 }, mascotButton: { overflow: 'hidden', borderRadius: 40, backgroundColor: c.green, height: 65, maxWidth: 65, marginTop: -30, borderWidth: 5, borderColor: c.paper }, mascot: { width: 155, height: 100, position: 'absolute', top: -8, left: -56 },
   transaction: { flexDirection: 'row', alignItems: 'center', gap: 10 }, transactionIcon: { width: 45, height: 45, borderRadius: 19, alignItems: 'center', justifyContent: 'center' }, transactionName: { fontSize: 12, fontWeight: '600', color: c.ink }, detail: { fontSize: 10, color: c.muted, marginTop: 6 }, category: { fontSize: 10, color: c.muted, borderLeftWidth: 1, borderLeftColor: '#B9C4BC', paddingLeft: 9, maxWidth: 72 }, amount: { fontSize: 12, fontWeight: '600', color: c.ink, minWidth: 72, textAlign: 'right' }, empty: { textAlign: 'center', color: c.muted, paddingVertical: 24, lineHeight: 22 },
 });
 

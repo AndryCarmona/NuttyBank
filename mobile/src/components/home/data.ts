@@ -1,4 +1,4 @@
-export const colors = { ink: '#20272D', green: '#7EA582', bright: '#26CC70', paper: '#FAF9F6', panel: '#EFF1F4', muted: '#737C7B' };
+export const colors = { ink: '#20272D', green: '#7EA582', bright: '#26CC70', paper: '#FFFFFF', panel: '#EFF1F4', muted: '#737C7B' };
 export const money = (value: number) => `${value < 0 ? '−' : ''}$${Math.abs(value).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 export const transactions = [
   { id: '1', name: 'Sueldo', category: 'Ingresos', amount: 4000, day: 30, time: '18:27', icon: '▱', color: colors.green },

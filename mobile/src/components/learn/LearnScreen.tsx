@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, type ComponentRef } from 'react';
 import { Image, Pressable, ScrollView, Text, View } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import ScreenSurface from '../home/ScreenSurface';
-import { Navigation } from '../home/components';
+import { Navigation, useNavigationClearance } from '../home/components';
 import { NavigationIcon } from '../home/NavigationIcon';
 import { colors as c } from '../home/data';
 import lessons from './lessons.json';
@@ -33,6 +33,7 @@ function LearnContent() {
   const lesson = lessons.find(item => item.id === lessonId);
   const index = lessons.findIndex(item => item.id === lessonId);
   const progress = useLearningProgress(lessonId);
+  const clearance = useNavigationClearance();
   const requestedMode = ['read', 'activity', 'quiz', 'result', 'nutty'].includes(params.view ?? '') ? params.view! : 'read';
   const [selectedHistory, setSelectedHistory] = useState<number | null>(null);
   const [question, setQuestion] = useState(() => Math.max(0, Math.min(2, Number(params.question) || 0)));
@@ -58,7 +59,7 @@ function LearnContent() {
     else if (mode === 'activity') go('read');
     else save({ step: step - 1 });
   };
-  if (progress.ready && lesson && !isLessonUnlocked(lessonId, progress.data)) return <ScreenSurface green><View style={[s.body, { justifyContent: 'center' }]}><Text style={s.eyebrow}>LECCIÓN {index + 1} · BLOQUEADA</Text><Text style={s.heading}>Avancemos paso a paso</Text><Text style={s.text}>Completa la lección {index}: {lessons[index - 1].title}, para abrir esta lección. Basta con terminar su quiz; no necesitas una nota mínima.</Text><Action label="Ver lección anterior" onPress={() => router.replace({ pathname: '/learn', params: { lesson: lessons[index - 1].id, view: 'read' } } as never)} /><Action label="Volver a lecciones" onPress={() => router.replace('/learn' as never)} /></View><Navigation /></ScreenSurface>;
+  if (progress.ready && lesson && !isLessonUnlocked(lessonId, progress.data)) return <ScreenSurface green><View style={[s.body, { justifyContent: 'center', paddingBottom: clearance }]}><Text style={s.eyebrow}>LECCIÓN {index + 1} · BLOQUEADA</Text><Text style={s.heading}>Avancemos paso a paso</Text><Text style={s.text}>Completa la lección {index}: {lessons[index - 1].title}, para abrir esta lección. Basta con terminar su quiz; no necesitas una nota mínima.</Text><Action label="Ver lección anterior" onPress={() => router.replace({ pathname: '/learn', params: { lesson: lessons[index - 1].id, view: 'read' } } as never)} /><Action label="Volver a lecciones" onPress={() => router.replace('/learn' as never)} /></View><Navigation /></ScreenSurface>;
   if (progress.ready && lesson && (mode === 'read' || mode === 'quiz')) return <LessonPlayer lesson={lesson} index={index} mode={mode} attempt={attempt} question={question} onQuestion={n => { setQuestion(n); save({ question: n }); }} save={save} go={go} back={back} />;
   const mascot = <Image source={require('@/assets/images/nutty-teacher.png')} resizeMode="contain" style={s.mascot} />;
   return <ScreenSurface green>
@@ -102,6 +103,7 @@ function LearnContent() {
           <View style={[s.bubble, resultAnswers[question] >= 0 && resultAnswers[question] !== lesson.questions[question].correct && s.warning]}><Text style={s.text}>{lesson.questions[question].prompt}</Text><Text style={s.heading}>{lesson.questions[question].explanation}</Text>{resultAnswers[question] >= 0 && resultAnswers[question] !== lesson.questions[question].correct && <Text style={s.text}>{answerFeedback(lesson.questions[question], resultAnswers[question])}</Text>}</View><View style={[s.card, resultAnswers[question] >= 0 && resultAnswers[question] !== lesson.questions[question].correct && s.warning]}><Text style={s.eyebrow}>OTRO EJEMPLO CON NUTTY</Text><Text style={s.text}>{examples[index]}</Text><Text style={s.text}>¿Qué cambió en tu forma de entender esta pregunta? Puedes volver a intentarla cuando quieras.</Text></View><Action label="Volver a la explicación" onPress={() => { save({ step: 0 }); router.setParams({ view: '' }); go('read'); }} /><Action label="Volver al resumen" disabled={!attempt.completed} onPress={() => { router.setParams({ view: '' }); go('result'); }} />
         </>}
       </View>
+      <View style={{ height: clearance, flexShrink: 0, backgroundColor: c.paper }} />
     </ScrollView>
     <Navigation />
   </ScreenSurface>;

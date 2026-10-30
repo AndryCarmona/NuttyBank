@@ -26,7 +26,7 @@ Run lint and typecheck before declaring any task done.
 ## Navigation & Routing
 
 - Preserve the NuttyBank screen background convention: use the shared `ScreenSurface` (or `Page`) so green headers extend behind the status bar. Keep its fixed top inset outside scrolling content; do not add another top safe-area inset.
-- Scroll content must fill the available height, with a continuous cream body and no blank strip at the bottom. Reuse `Navigation` with all four corners rounded and its bottom safe-area spacing.
+- Scroll content must fill the available height, with a continuous white body. Reuse floating `Navigation` with all four corners rounded, a transparent outer container and bottom safe-area spacing. Use `useNavigationClearance` to keep final content and controls accessible above the floating bar.
 
 - Use **Expo Router** for all navigation. Routes live in `src/app/` — every file there is a screen, `_layout.tsx` files define navigators. Keep non-route code (components, hooks, utils) outside `src/app/`.
 - Import `Link`, `router`, and `useLocalSearchParams` from `expo-router`.

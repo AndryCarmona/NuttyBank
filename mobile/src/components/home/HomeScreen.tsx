@@ -9,7 +9,7 @@ import { Button, Page, s, Summary, TransactionList } from './components';
 import { colors as c, money, totalExpenses, transactions } from './data';
 
 export default function HomeScreen() {
-  const { session, signOut } = useAuth();
+  const { session } = useAuth();
   // El nombre sale del perfil guardado en Supabase (a través del backend). Mientras llega, saludo genérico.
   const me = useQuery({ queryKey: ['me', session?.user.id], queryFn: fetchMe, enabled: !!session });
   const [period, setPeriod] = useState('Mensual');
@@ -38,15 +38,12 @@ export default function HomeScreen() {
       </Pressable>
       <View style={styles.periods}>{['Diario', 'Semanal', 'Mensual'].map(p => <Button key={p} label={p} selected={p === period} onPress={() => setPeriod(p)} />)}</View>
       <TransactionList items={items} />
-      <Pressable accessibilityRole="button" onPress={signOut} style={({ pressed }) => [styles.signOut, pressed && { opacity: .6 }]}><Text style={styles.signOutText}>Cerrar sesión</Text></Pressable>
     </View>
   </Page>;
 }
 const styles = StyleSheet.create({
   profileError: { backgroundColor: '#FDE7E4', borderRadius: 14, padding: 12, marginBottom: 14 },
   profileErrorText: { fontSize: 12, color: '#912018', lineHeight: 17 },
-  signOut: { alignSelf: 'center', paddingVertical: 14, paddingHorizontal: 20, marginBottom: 12 },
-  signOutText: { fontSize: 14, fontWeight: '600', color: c.muted, textDecorationLine: 'underline' },
   hero: { padding: 28, paddingTop: 30, paddingBottom: 24 },
   greeting: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 },
   welcome: { fontSize: 19, fontWeight: '700', color: c.ink },
