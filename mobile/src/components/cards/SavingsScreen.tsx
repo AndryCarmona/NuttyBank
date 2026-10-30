@@ -1,5 +1,5 @@
-import { useRef, useState } from 'react';
-import { router, useLocalSearchParams } from 'expo-router';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { Page, s } from '@/components/home/components';
 import { NavigationIcon } from '@/components/home/NavigationIcon';
@@ -8,6 +8,8 @@ import DateField from '@/components/cards/DateField';
 import { addGoal, contribute, localDate, useAccounts, type Goal } from '@/components/cards/store';
 import { savingsAmount, savingsDate, savingsMessage } from '@/components/cards/savings-utils';
 
+// Aviso de la última aportación: se guarda fuera del componente porque la pantalla del formulario se cierra al guardar.
+let pendingNotice: string | null = null;
 const categories = ['Viaje', 'Casa', 'Coche', 'Boda', 'Estudios', 'Emergencias', 'Otro'];
 function icon(category: string) { return ['Viaje', 'Casa', 'Coche', 'Boda'].includes(category) ? category : category === 'Nueva casa' ? 'Casa' : 'Ahorros'; }
 function Button({ title, onPress }: { title: string; onPress: () => void }) {
@@ -37,6 +39,18 @@ export default function SavingsScreen() {
   const [note, setNote] = useState('');
   const [error, setError] = useState('');
   const submitted = useRef(false);
+  const [notice, setNotice] = useState('');
+  // Cada vez que la pantalla recibe el foco el formulario queda limpio y se vuelve a permitir guardar.
+  useFocusEffect(useCallback(() => {
+    submitted.current = false;
+    setAmount(''); setConcept(''); setNote(''); setError(''); setDate(localDate());
+    if (pendingNotice) { setNotice(pendingNotice); pendingNotice = null; }
+  }, [setAmount, setConcept, setNote, setError, setDate, setNotice]));
+  useEffect(() => {
+    if (!notice) return;
+    const timer = setTimeout(() => setNotice(''), 5000);
+    return () => clearTimeout(timer);
+  }, [notice]);
   const navigate = (next: string, id?: string, replace = false) => {
     const route = { pathname: '/cards' as const, params: { view: next, ...(id ? { goal: id } : {}) } };
     if (replace) router.replace(route); else router.push(route);
@@ -54,8 +68,12 @@ export default function SavingsScreen() {
   function saveContribution() {
     if (submitted.current) return;
     try {
-      contribute(selectedGoal, savingsAmount(amount), date, concept, note);
+      const value = savingsAmount(amount);
+      contribute(selectedGoal, value, date, concept, note);
       submitted.current = true;
+      const goalName = data.goals.find(item => item.id === selectedGoal)?.name ?? 'tu ahorro';
+      pendingNotice = `Listo: se añadieron ${money(value)} a «${goalName}».`;
+      setAmount(''); setConcept(''); setNote(''); setError('');
       if (selectedGoal === goalId && router.canGoBack()) router.back();
       else navigate('goal', selectedGoal, true);
     } catch (e) { setError((e as Error).message); }
@@ -81,6 +99,7 @@ export default function SavingsScreen() {
       {!!error && <Text accessibilityRole="alert" style={styles.error}>{error}</Text>}<Button title="Crear ahorro" onPress={createSaving} />
     </>}
     {view === 'goal' && goal && <>
+      {!!notice && <View accessibilityRole="alert" accessibilityLiveRegion="polite" style={styles.notice}><Text style={styles.noticeIcon}>✓</Text><Text style={styles.noticeText}>{notice}</Text><Pressable accessibilityRole="button" accessibilityLabel="Cerrar aviso" hitSlop={10} onPress={() => setNotice('')}><Text style={styles.noticeClose}>✕</Text></Pressable></View>}
       <View style={styles.overview}><View style={{ flex: 1, gap: 16 }}><View><Text style={styles.secondary}>Meta</Text><Text style={styles.amount}>{money(goal.target)}</Text></View><View><Text style={styles.secondary}>Importe ahorrado</Text><Text style={styles.amount}>{money(goal.saved)}</Text></View></View><View style={styles.goalIcon}><NavigationIcon name={icon(goal.category ?? goal.name)} size={44} /><Text style={styles.tileTitle}>{goal.category ?? goal.name}</Text></View></View>
       <Progress goal={goal} />
       <View style={styles.deadline}><Text style={styles.label}>{goal.deadline ? `Fecha final: ${new Date(goal.deadline + 'T12:00:00').toLocaleDateString('es-MX')}` : 'Sin fecha final'}</Text><Text style={styles.secondary}>{goal.saved >= goal.target ? '¡Objetivo alcanzado!' : `Te faltan ${money(goal.target - goal.saved)}`}</Text>{goal.deadline && goal.deadline < localDate() && goal.saved < goal.target && <Text style={styles.secondary}>La fecha final pasó; puedes seguir aportando a tu meta.</Text>}</View>
@@ -101,6 +120,10 @@ export default function SavingsScreen() {
   </View></Page>;
 }
 const styles = StyleSheet.create({
+  notice: { flexDirection: 'row', alignItems: 'center', gap: 10, backgroundColor: '#E3F4DA', borderColor: '#6DB84F', borderWidth: 1.5, borderRadius: 18, paddingVertical: 12, paddingHorizontal: 14, marginTop: 8 },
+  noticeIcon: { width: 26, height: 26, borderRadius: 13, backgroundColor: '#3E8E2A', color: '#fff', textAlign: 'center', lineHeight: 26, fontWeight: '800', overflow: 'hidden' },
+  noticeText: { flex: 1, color: c.ink, fontSize: 13, fontWeight: '600', lineHeight: 18 },
+  noticeClose: { color: c.ink, fontSize: 16, paddingHorizontal: 4 },
   body: { width: '100%', alignSelf: 'center' }, heading: { fontSize: 18, fontWeight: '700', color: c.ink, marginBottom: 12, marginTop: 12 }, secondary: { fontSize: 11, color: c.muted, lineHeight: 17 }, label: { fontSize: 13, color: c.ink }, strong: { fontSize: 13, fontWeight: '600', color: c.ink }, amount: { fontSize: 20, fontWeight: '700', color: c.ink, marginTop: 5 },
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 14, marginVertical: 22 }, tile: { width: '47%', backgroundColor: '#EDF2E9', borderRadius: 24, padding: 14, alignItems: 'center', gap: 7 }, icon: { backgroundColor: c.green, borderRadius: 22, padding: 8 }, tileTitle: { fontSize: 13, fontWeight: '600', textAlign: 'center', color: c.ink },
   button: { backgroundColor: c.green, borderRadius: 24, padding: 15, minHeight: 48, marginVertical: 18, alignItems: 'center' }, buttonText: { color: c.ink, fontSize: 14, fontWeight: '600' }, field: { gap: 8, marginBottom: 20 }, input: { backgroundColor: c.panel, borderRadius: 18, padding: 15, minHeight: 48, color: c.ink }, choices: { flexDirection: 'row', flexWrap: 'wrap', gap: 9, marginTop: 12, marginBottom: 22 }, choice: { backgroundColor: c.panel, borderRadius: 16, padding: 13 }, selected: { backgroundColor: '#BED4B7', borderColor: c.green, borderWidth: 1 },

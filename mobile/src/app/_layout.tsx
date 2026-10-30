@@ -34,7 +34,7 @@ export default function RootLayout() {
 
   return (
     <View style={[styles.fill, { backgroundColor }]}>
-      <KeyboardProvider statusBarTranslucent preserveEdgeToEdge>
+      <KeyboardProvider statusBarTranslucent navigationBarTranslucent preserveEdgeToEdge>
         <ThemeProvider value={navigationTheme}>
           <QueryClientProvider client={queryClient}>
             <AuthProvider>
@@ -66,7 +66,7 @@ function RootNavigator() {
   // Con sesión solo existe el grupo (app); sin sesión, solo el grupo (auth).
   // Expo Router redirige solo cuando la sesión cambia (iniciar o cerrar sesión).
   return (
-    <Stack screenOptions={{ headerShown: false }}>
+    <Stack screenOptions={{ headerShown: false, animation: 'fade', animationDuration: 200 }}>
       <Stack.Protected guard={!!session} redirectTo="/login">
         <Stack.Screen name="(app)" />
       </Stack.Protected>

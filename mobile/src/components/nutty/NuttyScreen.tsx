@@ -1,3 +1,4 @@
+import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
 import {
@@ -22,6 +23,7 @@ import { useAuth } from '@/context/auth-context';
 import { sendChat } from '@/lib/api';
 import { buildFinanceContext } from './context';
 import { cleanReply } from './format';
+import { pickSuggestions } from './questions';
 import {
   loadConversations,
   loadUseData,
@@ -42,11 +44,8 @@ const WELCOME: Msg = {
   content: '¡Hola! Soy Nutty 🐿️ Te ayudo a entender tu dinero: ahorro, presupuesto, tarjetas y más. ¿Qué quieres aprender hoy?',
 };
 
-const SUGGESTIONS = [
-  '¿En qué tarjeta tengo más gastos hormiga?',
-  '¿Cómo empiezo a ahorrar?',
-  '¿Qué es el interés?',
-];
+// Últimas sugerencias mostradas: la siguiente conversación nueva evita repetirlas.
+let lastSuggestions: string[] = [];
 
 // El backend acepta hasta 20 mensajes de historial.
 const MAX_HISTORY = 20;
@@ -79,6 +78,12 @@ export default function NuttyScreen() {
   const listRef = useRef<FlatList<Msg>>(null);
   const counter = useRef(0);
   const saved = useRef<Conversation[]>([]);
+  // Tres preguntas del banco que cambian cada vez que empieza una conversación nueva.
+  const [suggestions, setSuggestions] = useState<string[]>(() => {
+    const picked = pickSuggestions({ avoid: lastSuggestions });
+    lastSuggestions = picked;
+    return picked;
+  });
 
   // Carga el historial y la preferencia de este usuario.
   useEffect(() => {
@@ -89,6 +94,12 @@ export default function NuttyScreen() {
       saved.current = list;
       setConversations(list);
       setUseData(pref);
+      // Sin permiso para usar sus datos, no se sugieren preguntas sobre ellos.
+      if (!pref) {
+        const picked = pickSuggestions({ withData: false, avoid: lastSuggestions });
+        lastSuggestions = picked;
+        setSuggestions(picked);
+      }
       setLoaded(true);
     });
     return () => {
@@ -129,8 +140,15 @@ export default function NuttyScreen() {
     ask(history);
   }
 
+  function refreshSuggestions(withData = useData) {
+    const picked = pickSuggestions({ withData, avoid: lastSuggestions });
+    lastSuggestions = picked;
+    setSuggestions(picked);
+  }
+
   function startNew() {
     if (pending) return;
+    refreshSuggestions();
     setConvId(newConversationId());
     setMessages([]);
     setError(null);
@@ -157,6 +175,8 @@ export default function NuttyScreen() {
 
   function toggleData(value: boolean) {
     setUseData(value);
+    // Si se apaga "usar mis datos" no se sugieren preguntas sobre ellos.
+    if (messages.length === 0) refreshSuggestions(value);
     if (userId) saveUseData(userId, value);
   }
 
@@ -251,7 +271,7 @@ export default function NuttyScreen() {
             ) : null}
             {messages.length === 0 && !pending ? (
               <View style={styles.chips}>
-                {SUGGESTIONS.map((s) => (
+                {suggestions.map((s) => (
                   <Pressable key={s} accessibilityRole="button" onPress={() => submit(s)} style={({ pressed }) => [styles.chip, pressed && { opacity: 0.6 }]}>
                     <Text style={styles.chipText}>{s}</Text>
                   </Pressable>
@@ -279,8 +299,8 @@ export default function NuttyScreen() {
           accessibilityState={{ disabled: !canSend }}
           disabled={!canSend}
           onPress={() => submit()}
-          style={[styles.send, !canSend && { opacity: 0.4 }]}>
-          <Text style={styles.sendText}>↑</Text>
+          style={({ pressed }) => [styles.send, !canSend && styles.sendDisabled, pressed && canSend && styles.sendPressed]}>
+          <Ionicons name="paper-plane" size={26} color={canSend ? '#FFFFFF' : c.muted} style={styles.sendIcon} />
         </Pressable>
       </View>
 
@@ -356,18 +376,35 @@ const styles = StyleSheet.create({
   inputBar: { flexDirection: 'row', alignItems: 'flex-end', gap: 10, paddingHorizontal: 16, paddingTop: 10, backgroundColor: c.paper, borderTopWidth: 1, borderTopColor: '#E3E6E3' },
   input: {
     flex: 1,
-    minHeight: 46,
-    maxHeight: 120,
-    borderRadius: 23,
+    minHeight: 58,
+    maxHeight: 130,
+    borderRadius: 29,
     paddingHorizontal: 18,
-    paddingTop: Platform.OS === 'ios' ? 13 : 10,
-    paddingBottom: Platform.OS === 'ios' ? 13 : 10,
+    paddingTop: Platform.OS === 'ios' ? 18 : 15,
+    paddingBottom: Platform.OS === 'ios' ? 18 : 15,
     backgroundColor: c.panel,
     fontSize: 15,
     color: c.ink,
   },
-  send: { width: 46, height: 46, borderRadius: 23, backgroundColor: c.ink, alignItems: 'center', justifyContent: 'center' },
-  sendText: { fontSize: 22, color: '#FFFFFF', fontWeight: '700' },
+  send: {
+    width: 58,
+    height: 58,
+    borderRadius: 29,
+    backgroundColor: c.green,
+    borderWidth: 3,
+    borderColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 6,
+    shadowColor: c.ink,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.22,
+    shadowRadius: 8,
+  },
+  sendDisabled: { backgroundColor: c.panel, borderColor: c.panel, elevation: 0, shadowOpacity: 0 },
+  sendPressed: { transform: [{ scale: 0.92 }], opacity: 0.9 },
+  // El avión de papel se ve centrado si se mueve un poco hacia la derecha.
+  sendIcon: { marginLeft: 3, marginTop: 1 },
   backdrop: { flex: 1, backgroundColor: '#00000066' },
   sheet: { maxHeight: '75%', backgroundColor: c.paper, borderTopLeftRadius: 28, borderTopRightRadius: 28, paddingHorizontal: 20, paddingTop: 18 },
   sheetHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 },
