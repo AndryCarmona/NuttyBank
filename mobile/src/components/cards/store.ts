@@ -1,7 +1,9 @@
 import { savingsDate } from './savings-utils';
 import { useEffect, useSyncExternalStore } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-export type Card = { id: string; bank: string; type: 'Débito' | 'Crédito'; limit: number; balance: number };
+// color, cutDay y payDay son opcionales (las tarjetas guardadas antes no los tienen).
+// `hasPin` solo indica que hay un NIP guardado; el NIP en sí vive en pin-store.ts (almacén seguro).
+export type Card = { id: string; bank: string; type: 'Débito' | 'Crédito'; limit: number; balance: number; color?: string; cutDay?: number; payDay?: number; hasPin?: boolean };
 export type Entry = { id: string; date: string; category: string; amount: number; concept: string; note: string; source: string; kind: 'Gasto' | 'Ingreso' };
 export type Goal = { id: string; name: string; target: number; saved: number; category?: string; deadline?: string; initialSaved?: number; contributions?: { id: string; amount: number; date: string; concept: string; note: string }[] };
 export const initialCategories = ['Comida', 'Transporte', 'Salud', 'Supermercado', 'Alquiler', 'Regalos', 'Ahorros', 'Ocio'];
@@ -44,6 +46,8 @@ function update(next: typeof state) {
   saves = saves.then(() => AsyncStorage.setItem(storageKeyFor(userId), snapshot)).catch(() => { state = { ...state, storageError: 'No se pudo guardar en el dispositivo. Mantén la app abierta e inténtalo nuevamente.' }; notify(); });
 }
 export function useAccounts() { useEffect(load, []); return useSyncExternalStore(fn => { listeners.add(fn); return () => { listeners.delete(fn); }; }, () => state, () => state); }
+export function storageUserId() { return currentUser; }
+export function setCardHasPin(id: string, hasPin: boolean) { update({ ...state, cards: state.cards.map(card => card.id === id ? { ...card, hasPin } : card) }); }
 export function addCard(card: Omit<Card, 'id'>) { const id = `${Date.now()}-${Math.random()}`; update({ ...state, cards: [...state.cards, { ...card, id }] }); return id; }
 export function addCategory(name: string) { if (state.categories.some(c => c.toLocaleLowerCase() === name.toLocaleLowerCase())) throw Error('Esta categoría ya existe.'); update({ ...state, categories: [...state.categories, name] }); }
 export function addEntry(entry: Omit<Entry, 'id'>) {

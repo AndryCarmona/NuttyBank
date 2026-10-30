@@ -52,4 +52,9 @@ const raro = build({ cards: [{ id: 'x', bank: ' ', type: 'Débito', limit: 0, ba
   entries: [e('2026-10-28', 10, 'x'.repeat(100), 'x'), e('2026-10-28', 10, 'x'.repeat(100), 'x')], goals: [] }, now);
 assert.equal(raro.cards[0].bank, 'Tarjeta'); assert.equal(raro.cards[0].balance, 0);
 assert.equal(raro.repeated_small[0].concept.length, 40);
+// Color, días de corte/pago y NIP nunca viajan a Nutty ni al backend.
+const secretos = build({ cards: [{ id: 'z', bank: 'Banco Z', type: 'Crédito', limit: 1000, balance: 100, color: '#B6D4F2', cutDay: 15, payDay: 5, hasPin: true, pin: '4321' }],
+  entries: [e('2026-10-28', 10, 'Café', 'z')], goals: [] }, now);
+const texto = JSON.stringify(secretos);
+assert(!/4321|pin|color|cutDay|payDay|#B6D4F2/i.test(texto), 'datos privados de la tarjeta en el contexto: ' + texto);
 console.log('OK: resumen de finanzas para Nutty (ventana de 90 días, hormiga, tarjetas, efectivo y límites de texto).');

@@ -53,19 +53,28 @@ const store = context.exports;
   await new Promise(resolve => setImmediate(resolve));
   assert.equal(JSON.parse(saved.get('nuttybank-accounts-v1:user-a')).entries.length, 4);
   // Aislamiento: otra cuenta en el mismo teléfono no ve nada de user-a.
+  // Color, días de corte/pago y marca de NIP se guardan con la tarjeta; el NIP en sí nunca está en estos datos.
+  const colored = store.addCard({ bank: 'Banco C', type: 'Crédito', balance: 50, limit: 900, color: '#B6D4F2', cutDay: 15, payDay: 5 });
+  store.setCardHasPin(colored, true);
+  await new Promise(resolve => setImmediate(resolve));
+  const rawA = saved.get('nuttybank-accounts-v1:user-a');
+  const savedCard = JSON.parse(rawA).cards.find(card => card.id === colored);
+  assert.equal(savedCard.color, '#B6D4F2'); assert.equal(savedCard.cutDay, 15); assert.equal(savedCard.payDay, 5); assert.equal(savedCard.hasPin, true);
+  assert(!/pin/i.test(rawA.replace(/hasPin/g, '')), 'el NIP no debe guardarse con los datos de la tarjeta');
+  assert.equal(store.storageUserId(), 'user-a');
   store.setStorageUser('user-b'); await new Promise(resolve => setImmediate(resolve));
   assert.equal(store.useAccounts().cards.length, 0);
   assert.equal(store.useAccounts().entries.length, 0);
   assert.equal(store.useAccounts().goals.length, 0);
   store.addCard({ bank: 'Banco B', type: 'Débito', balance: 10, limit: 0 });
   await new Promise(resolve => setImmediate(resolve));
-  assert.equal(JSON.parse(saved.get('nuttybank-accounts-v1:user-a')).cards.length, 2);
+  assert.equal(JSON.parse(saved.get('nuttybank-accounts-v1:user-a')).cards.length, 3);
   assert.equal(JSON.parse(saved.get('nuttybank-accounts-v1:user-b')).cards.length, 1);
   // Sin sesión no se puede guardar, y al volver user-a recupera lo suyo.
   store.setStorageUser(null);
   assert.throws(() => store.addCard({ bank: 'X', type: 'Débito', balance: 1, limit: 0 }));
   store.setStorageUser('user-a'); await new Promise(resolve => setImmediate(resolve));
-  assert.equal(store.useAccounts().cards.length, 2);
+  assert.equal(store.useAccounts().cards.length, 3);
   assert.equal(store.useAccounts().entries.length, 4);
   assert.equal(store.useAccounts().goals[0].saved, 300);
   assert.equal(store.useAccounts().goals[0].initialSaved, 200);
