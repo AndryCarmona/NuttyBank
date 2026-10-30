@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View } from 'react-native';
-import { colors as c, money, transactions } from './data';
+import { colors as c, money, transactions } from '@/components/home/data';
 const palette = [c.green, c.bright, '#B5C6AB', '#384B40', '#C5DCD5'];
 export function CategoryChart({ items = transactions }: { items?: typeof transactions }) {
   const expenses = items.filter(t => t.amount < 0);

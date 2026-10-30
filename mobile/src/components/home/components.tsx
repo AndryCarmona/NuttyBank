@@ -1,19 +1,49 @@
-import RaisedTab from './RaisedTab';
+import { KeyboardAwareScrollView, useKeyboardState } from 'react-native-keyboard-controller';
+import RaisedTab from '@/components/home/RaisedTab';
 import { PropsWithChildren } from 'react';
-import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { router, usePathname } from 'expo-router';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
-import { colors as c, money, transactions } from './data';
-import { NavigationIcon } from './NavigationIcon';
+import { colors as c, money, transactions } from '@/components/home/data';
+import { NavigationIcon } from '@/components/home/NavigationIcon';
 
 export function Button({ label, onPress, selected = false }: { label: string; onPress: () => void; selected?: boolean }) {
   return <Pressable accessibilityRole="button" accessibilityState={{ selected }} onPress={onPress} style={({ pressed }) => [s.pill, selected && s.selected, pressed && { opacity: .65 }]}><Text style={[s.small, selected && { color: 'white' }]}>{label}</Text></Pressable>;
 }
+// Espacio que el contenido deja abajo para que la barra flotante no tape lo último de la pantalla.
+const NAV_SPACE = 112;
 export function Page({ children, title, green = false }: PropsWithChildren<{ title?: string; green?: boolean }>) {
   const insets = useSafeAreaInsets();
-  return <SafeAreaView edges={['top', 'left', 'right']} style={[s.safe, green && { backgroundColor: c.green }]}><View style={s.frame}><ScrollView contentContainerStyle={{ paddingBottom: 30 }} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
-    {title && <View style={s.header}><Pressable accessibilityRole="button" accessibilityLabel="Volver al inicio" onPress={() => router.canGoBack() ? router.back() : router.replace('/')} style={s.touch}><Text style={{ fontSize: 27, color: c.ink }}>←</Text></Pressable><Text style={s.title}>{title}</Text><View style={s.touch}><NavigationIcon name="Notificaciones" /></View></View>}
-    {children}</ScrollView><Navigation /><View style={{ height: insets.bottom, backgroundColor: c.panel }} /></View></SafeAreaView>;
+  const keyboardVisible = useKeyboardState(state => state.isVisible);
+  const backgroundColor = green ? c.green : c.paper;
+  return (
+    <SafeAreaView edges={['left', 'right']} style={[s.safe, { backgroundColor }]}>
+      {/* Esta zona no se desplaza: conserva el color detrás de la hora. */}
+      <View pointerEvents="none" style={{ height: insets.top, backgroundColor, flexShrink: 0 }} />
+      <View style={s.frame}>
+        <KeyboardAwareScrollView
+          style={s.scroll}
+          bounces={false}
+          overScrollMode="never"
+          contentInsetAdjustmentBehavior="never"
+          automaticallyAdjustContentInsets={false}
+          contentContainerStyle={[s.scrollContent, { backgroundColor }]}
+          bottomOffset={24}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="on-drag">
+          {title && <View style={s.header}><Pressable accessibilityRole="button" accessibilityLabel="Volver al inicio" onPress={() => router.canGoBack() ? router.back() : router.replace('/')} style={s.touch}><Text style={{ fontSize: 27, color: c.ink }}>←</Text></Pressable><Text style={s.title}>{title}</Text><View style={s.touch}><NavigationIcon name="Notificaciones" /></View></View>}
+          {children}
+          {/* Deja libre el espacio de la barra flotante, con el mismo color del cuerpo de la pantalla. */}
+          <View style={{ height: NAV_SPACE + insets.bottom, backgroundColor: c.paper, flexShrink: 0 }} />
+        </KeyboardAwareScrollView>
+        {/* Barra flotante: no ocupa espacio en la pantalla, se dibuja encima del contenido. */}
+        <View pointerEvents={keyboardVisible ? 'none' : 'box-none'} accessibilityElementsHidden={keyboardVisible} importantForAccessibility={keyboardVisible ? 'no-hide-descendants' : 'auto'} style={[s.floatingNav, { bottom: insets.bottom + 12 }, keyboardVisible && s.hiddenNavigation]}>
+          <Navigation />
+        </View>
+      </View>
+    </SafeAreaView>
+  );
 }
 export function Navigation() {
   const path = usePathname();
@@ -32,6 +62,10 @@ export function TransactionList({ items = transactions, month = 'Abr', empty = '
   return <View style={{ gap: 19, paddingVertical: 18 }}>{items.length === 0 && <Text style={s.empty}>{empty}</Text>}{items.map(t => <View key={t.id} style={s.transaction}><View style={[s.transactionIcon, { backgroundColor: t.color }]}><NavigationIcon name={t.category} /></View><View style={{ flex: 1 }}><Text style={s.transactionName}>{t.name}</Text><Text style={s.detail}>{t.time} · {t.day} {month}</Text></View><Text style={s.category}>{t.category}</Text><Text style={s.amount}>{money(t.amount)}</Text></View>)}</View>;
 }
 export const s = StyleSheet.create({
+  scroll: { flex: 1, backgroundColor: c.paper },
+  scrollContent: { flexGrow: 1 },
+  floatingNav: { position: 'absolute', left: 16, right: 16 },
+  hiddenNavigation: { opacity: 0 },
   summaryTitle: { fontSize: 16, fontWeight: '700', color: c.ink },
   summaryContent: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   summaryLine: { flexDirection: 'row', alignItems: 'center', gap: 6 },
@@ -39,13 +73,13 @@ export const s = StyleSheet.create({
   tabSurface: { borderRadius: 20, padding: 3, borderWidth: 2, borderColor: 'transparent' },
   tabSelected: { backgroundColor: c.green, borderColor: c.paper, elevation: 4, shadowColor: '#314B35', shadowOffset: { width: 0, height: 3 }, shadowOpacity: .18, shadowRadius: 5 },
   tabDot: { width: 5, height: 5, borderRadius: 3, backgroundColor: '#527A59', marginTop: 5 },
-  safe: { flex: 1, backgroundColor: c.paper }, frame: { flex: 1, width: '100%', maxWidth: 540, alignSelf: 'center' },
+  safe: { flex: 1, backgroundColor: c.paper }, frame: { flex: 1, width: '100%', maxWidth: 540, alignSelf: 'center', backgroundColor: c.paper },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 18, paddingTop: 18, paddingBottom: 54 }, title: { fontSize: 17, fontWeight: '700', color: c.ink }, touch: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
-  body: { backgroundColor: c.paper, borderTopLeftRadius: 48, borderTopRightRadius: 48, padding: 28, minHeight: 480 },
+  body: { backgroundColor: c.paper, borderTopLeftRadius: 48, borderTopRightRadius: 48, padding: 24, paddingBottom: 38, flexGrow: 1 },
   small: { fontSize: 12, color: c.ink }, bold: { fontSize: 17, fontWeight: '700', color: c.ink },
   summary: { borderRadius: 28, backgroundColor: c.panel, padding: 23, gap: 18, minHeight: 146 }, savings: { flex: 1, alignItems: 'center', gap: 8, borderRightWidth: 1, borderRightColor: '#B9C4BC', paddingRight: 10 }, summaryRight: { flex: 1.6, gap: 10 }, divider: { height: 1, backgroundColor: '#D5DADD' },
   pill: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: c.green, paddingHorizontal: 10, paddingVertical: 11, borderRadius: 19, minHeight: 42 }, selected: { backgroundColor: c.ink },
-  nav: { flexDirection: 'row', backgroundColor: c.panel, borderTopLeftRadius: 38, borderTopRightRadius: 38, paddingHorizontal: 13, paddingTop: 10, paddingBottom: 8, alignItems: 'center', minHeight: 76 }, navItem: { flex: 1, height: 48, justifyContent: 'center', alignItems: 'center' }, navIcon: { fontSize: 32, color: c.ink }, activeIcon: { backgroundColor: c.green, borderRadius: 16, overflow: 'hidden', paddingHorizontal: 8 }, mascotButton: { overflow: 'hidden', borderRadius: 40, backgroundColor: c.green, height: 65, maxWidth: 65, marginTop: -30, borderWidth: 5, borderColor: c.paper }, mascot: { width: 155, height: 100, position: 'absolute', top: -8, left: -56 },
+  nav: { flexDirection: 'row', backgroundColor: c.panel, borderRadius: 40, paddingHorizontal: 13, paddingVertical: 10, alignItems: 'center', minHeight: 72, borderWidth: 1, borderColor: 'rgba(32,39,45,.06)', elevation: 12, shadowColor: '#20272D', shadowOffset: { width: 0, height: 8 }, shadowOpacity: .18, shadowRadius: 16 }, navItem: { flex: 1, height: 48, justifyContent: 'center', alignItems: 'center' }, navIcon: { fontSize: 32, color: c.ink }, activeIcon: { backgroundColor: c.green, borderRadius: 16, overflow: 'hidden', paddingHorizontal: 8 }, mascotButton: { overflow: 'hidden', borderRadius: 40, backgroundColor: c.green, height: 65, maxWidth: 65, marginTop: -30, borderWidth: 5, borderColor: c.paper }, mascot: { width: 155, height: 100, position: 'absolute', top: -8, left: -56 },
   transaction: { flexDirection: 'row', alignItems: 'center', gap: 10 }, transactionIcon: { width: 45, height: 45, borderRadius: 19, alignItems: 'center', justifyContent: 'center' }, transactionName: { fontSize: 12, fontWeight: '600', color: c.ink }, detail: { fontSize: 10, color: c.muted, marginTop: 6 }, category: { fontSize: 10, color: c.muted, borderLeftWidth: 1, borderLeftColor: '#B9C4BC', paddingLeft: 9, maxWidth: 72 }, amount: { fontSize: 12, fontWeight: '600', color: c.ink, minWidth: 72, textAlign: 'right' }, empty: { textAlign: 'center', color: c.muted, paddingVertical: 24, lineHeight: 22 },
 });
 

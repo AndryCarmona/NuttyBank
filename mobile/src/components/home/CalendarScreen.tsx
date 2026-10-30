@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { Button, Page, s, TransactionList } from './components';
-import { CategoryChart } from './charts';
-import { colors as c, months, transactions } from './data';
+import { Button, Page, s, TransactionList } from '@/components/home/components';
+import { CategoryChart } from '@/components/home/charts';
+import { colors as c, months, transactions } from '@/components/home/data';
 export default function CalendarScreen() {
   const [today] = useState(() => new Date());
   const [date, setDate] = useState({ month: today.getMonth(), year: today.getFullYear() });

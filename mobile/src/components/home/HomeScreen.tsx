@@ -4,9 +4,9 @@ import { router } from 'expo-router';
 import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '@/context/auth-context';
 import { fetchMe } from '@/lib/api';
-import { NavigationIcon } from './NavigationIcon';
-import { Button, Page, s, Summary, TransactionList } from './components';
-import { colors as c, money, totalExpenses, transactions } from './data';
+import { NavigationIcon } from '@/components/home/NavigationIcon';
+import { Button, Page, s, Summary, TransactionList } from '@/components/home/components';
+import { colors as c, money, totalExpenses, transactions } from '@/components/home/data';
 
 export default function HomeScreen() {
   const { session, signOut } = useAuth();

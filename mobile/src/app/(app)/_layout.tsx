@@ -17,5 +17,6 @@ export default function AppLayout() {
     return () => setStorageUser(null);
   }, [userId]);
 
-  return <Stack screenOptions={{ headerShown: false }} />;
+  // Cambio entre pantallas con un desvanecido suave (en lugar del zoom/deslizamiento por defecto).
+  return <Stack screenOptions={{ headerShown: false, animation: 'fade', animationDuration: 200 }} />;
 }
