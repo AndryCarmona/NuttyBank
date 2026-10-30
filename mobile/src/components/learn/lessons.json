@@ -1,0 +1,526 @@
+[
+  {
+    "id": "aprende-01",
+    "version": 1,
+    "title": "¿A dónde se va mi dinero?",
+    "minutes": 5,
+    "objective": "distinguir ingresos, gastos, transferencias propias y dinero prestado.",
+    "intro": "«Antes de ordenar mis bellotas, necesito saber cuántas llegaron y cuántas salieron. Hagamos tu mapa, sin regaños.»",
+    "cards": [
+      {
+        "title": "Lo que entra",
+        "text": "Un ingreso puede ser tu sueldo, lo que recibes por un trabajo o un apoyo. Para organizarte, distingue el dinero que ya recibiste del que todavía esperas recibir.\n\nUn préstamo también aumenta el dinero disponible en tu cuenta, pero viene acompañado de una deuda. No es dinero que hayas ganado ni un ingreso libre para gastar."
+      },
+      {
+        "title": "Lo que sale",
+        "text": "Los gastos incluyen compras grandes y pequeñas, en efectivo o con tarjeta. Si solo registras una forma de pago, parte de tu historia se queda fuera.\n\nMover $100 de una cuenta propia a otra no es una compra ni un nuevo ingreso. Separarlo de los gastos te ayuda a no contar dos veces el mismo dinero."
+      },
+      {
+        "title": "Lo disponible tiene compromisos",
+        "text": "Que veas dinero en tu cuenta no significa que todo esté libre. Parte puede estar reservada para renta, comida o un pago pendiente.\n\nNutty tiene $900 y necesita reservar $650 para sus compromisos. Quedan $250 antes de decidir otros usos: $900 − $650 = $250."
+      }
+    ],
+    "questions": [
+      {
+        "id": "P1",
+        "title": "Disponible y reservado",
+        "prompt": "Tienes $1,000 en tu cuenta y $700 reservados para compromisos. ¿Cuánto queda sin asignar?",
+        "options": [
+          "$1,000.",
+          "$300.",
+          "$1,700."
+        ],
+        "correct": 1,
+        "explanation": "$1,000 − $700 = $300.",
+        "mistakes": "A: incluye dinero ya comprometido. C: suma los compromisos cuando hay que restarlos."
+      },
+      {
+        "id": "P2",
+        "title": "¿Ingreso nuevo?",
+        "prompt": "Pasas $200 de tu cuenta de débito a otra cuenta tuya. ¿Qué ocurrió?",
+        "options": [
+          "Ganaste $200.",
+          "Compraste algo por $200.",
+          "Hiciste una transferencia propia."
+        ],
+        "correct": 2,
+        "explanation": "Cambió la ubicación del dinero, no tu total.",
+        "mistakes": "A: contarías dos veces el mismo dinero. B: no hubo compra ni consumo."
+      },
+      {
+        "id": "P3",
+        "title": "Dinero prestado",
+        "prompt": "Te depositan un préstamo de $2,000. ¿Cómo debes considerarlo al planear?",
+        "options": [
+          "Como dinero disponible que también genera una deuda.",
+          "Como un premio que no tendrás que devolver.",
+          "Como sueldo adicional."
+        ],
+        "correct": 0,
+        "explanation": "El depósito aumenta el saldo, pero también lo que debes.",
+        "mistakes": "B: un préstamo se devuelve. C: el sueldo se gana por trabajar; este depósito debe pagarse según sus condiciones."
+      }
+    ],
+    "takeaway": "«Mi saldo y mi dinero libre no siempre son lo mismo.»",
+    "challenge": "identifica tres movimientos recientes sin compartir cantidades ni datos personales."
+  },
+  {
+    "id": "aprende-02",
+    "version": 1,
+    "title": "Un plan que sí cabe en tu vida",
+    "minutes": 6,
+    "objective": "construir y ajustar un presupuesto sin depender de porcentajes rígidos.",
+    "intro": "«Tu plan debe adaptarse a tu vida. Si esta semana cambió el ingreso, podemos cambiar el plan.»",
+    "cards": [
+      {
+        "title": "Dale un trabajo a tu dinero",
+        "text": "Un presupuesto es un plan para decidir cómo usar lo que recibes. Anota ingresos, necesidades, compromisos y otros gastos. Incluye el ahorro cuando exista espacio para hacerlo.\n\nNo necesitas dividir el dinero con una fórmula perfecta. Lo que funciona para una persona puede no cubrir las necesidades de otra."
+      },
+      {
+        "title": "Si no siempre recibes lo mismo",
+        "text": "Una venta posible o un trabajo sin confirmar todavía pueden cambiar. En este ejercicio, Nutty organiza primero lo que ya recibió y revisa el plan cuando entra más dinero.\n\nAdemás del total, importan las fechas. Tener un ingreso previsto para fin de mes no resuelve automáticamente un recibo que vence mañana."
+      },
+      {
+        "title": "Cuando el plan no alcanza",
+        "text": "Si el dinero no cubre las necesidades, verlo por escrito permite identificar la diferencia. No significa que hayas fracasado.\n\nRevisar gastos ajustables, fechas y opciones de apoyo puede ayudar. No conviertas el ahorro en una obligación que deje sin cubrir comida o medicinas. Un presupuesto también sirve para reconocer que falta ingreso."
+      }
+    ],
+    "questions": [
+      {
+        "id": "P1",
+        "title": "Haz espacio",
+        "prompt": "Recibiste $1,500 y necesitas $1,200 para necesidades y compromisos. ¿Cuánto puedes asignar a otros usos?",
+        "options": [
+          "$300.",
+          "$1,200.",
+          "$2,700."
+        ],
+        "correct": 0,
+        "explanation": "$1,500 − $1,200 = $300.",
+        "mistakes": "B: ese dinero ya tiene un compromiso. C: sumar no muestra cuánto queda."
+      },
+      {
+        "id": "P2",
+        "title": "Un ingreso sin confirmar",
+        "prompt": "Esperas una venta de $400, pero aún no está confirmada. En el método practicado, ¿qué haces?",
+        "options": [
+          "Gastarla como si ya la hubieras cobrado.",
+          "Contarla dos veces para compensar el riesgo.",
+          "Mantenerla como pendiente y ajustar al recibirla."
+        ],
+        "correct": 2,
+        "explanation": "El plan distingue lo recibido de lo incierto.",
+        "mistakes": "A: podrías comprometer dinero que no llegue. B: duplicarlo aumenta la diferencia entre el plan y la realidad."
+      },
+      {
+        "id": "P3",
+        "title": "Un mes difícil",
+        "prompt": "Este mes tus ingresos no cubren los gastos esenciales. ¿Qué tiene más sentido?",
+        "options": [
+          "Mantener un porcentaje de ahorro aunque no alcance para comida.",
+          "Revisar prioridades, fechas, gastos ajustables y posibles apoyos.",
+          "Abandonar el registro porque ya no sirve."
+        ],
+        "correct": 1,
+        "explanation": "El presupuesto ayuda a detectar necesidades y decidir ajustes.",
+        "mistakes": "A: una regla de ahorro no debe desplazar necesidades esenciales. C: el registro sigue ayudando a entender cuánto falta y cuándo."
+      }
+    ],
+    "takeaway": "«Un presupuesto útil puede cambiar.»",
+    "challenge": "elige un día de la semana para revisar tu plan durante cinco minutos."
+  },
+  {
+    "id": "aprende-03",
+    "version": 1,
+    "title": "Pequeños gastos, decisiones tuyas",
+    "minutes": 5,
+    "objective": "reconocer gastos repetidos y evaluar una compra sin eliminar automáticamente los gustos.",
+    "intro": "«Disfrutar también cuenta. Vamos a descubrir qué compras te gustan de verdad y cuáles haces en automático.»",
+    "cards": [
+      {
+        "title": "Pequeño no significa invisible",
+        "text": "Un gasto pequeño puede sumar si se repite. Comprar algo de $25 cuatro veces por semana cuesta $100 a la semana. En cuatro semanas son $400.\n\nConocer el total te permite decidir. No demuestra que esa compra sea mala: quizá la disfrutas y cabe en tu presupuesto."
+      },
+      {
+        "title": "Lo necesario depende de tu vida",
+        "text": "El mismo gasto puede tener funciones distintas. Internet puede ser necesario para trabajar o estudiar. Un servicio poco usado puede ser prescindible para una persona y útil para otra.\n\nPregúntate: «¿Qué necesidad cubre? ¿Lo uso? ¿Qué tendría que dejar de pagar para comprarlo?»."
+      },
+      {
+        "title": "Una pausa antes de comprar",
+        "text": "Una promoción no crea dinero disponible. Antes de una compra no urgente, revisa el precio final, si la querías antes de verla y si desplaza algo importante.\n\nUna pausa elegida por ti puede ayudarte a decidir. Si todavía la quieres y cabe en el plan, disfrutarla también puede ser una decisión consciente."
+      }
+    ],
+    "questions": [
+      {
+        "id": "P1",
+        "title": "La repetición cuenta",
+        "prompt": "Compras algo de $20 cinco veces a la semana. ¿Cuánto gastas en cuatro semanas?",
+        "options": [
+          "$100.",
+          "$400.",
+          "$80."
+        ],
+        "correct": 1,
+        "explanation": "$20 × 5 × 4 = $400.",
+        "mistakes": "A: calculaste solo una semana. C: faltó multiplicar por las cinco compras semanales."
+      },
+      {
+        "id": "P2",
+        "title": "Oferta por tiempo limitado",
+        "prompt": "Una compra no urgente está rebajada, pero usaría dinero reservado para transporte. ¿Qué acción coincide con la lección?",
+        "options": [
+          "Comprar porque una rebaja siempre ahorra dinero.",
+          "Ignorar el precio final.",
+          "Revisar prioridades y posponerla si afecta ese compromiso."
+        ],
+        "correct": 2,
+        "explanation": "Una promoción no elimina el compromiso de transporte.",
+        "mistakes": "A: gastar en algo rebajado sigue siendo una salida de dinero. B: el precio final es lo que realmente pagarás."
+      },
+      {
+        "id": "P3",
+        "title": "Un gusto que sí cabe",
+        "prompt": "¿Todo gasto pequeño de entretenimiento debe desaparecer?",
+        "options": [
+          "No; conviene conocer su total y decidir según el presupuesto y lo que valoras.",
+          "Sí; divertirse siempre es irresponsable.",
+          "No importa registrarlo porque es pequeño."
+        ],
+        "correct": 0,
+        "explanation": "El objetivo es decidir con información, no prohibir los gustos.",
+        "mistakes": "B: disfrutar puede tener un lugar en el plan. C: la repetición puede hacer relevante un monto pequeño."
+      }
+    ],
+    "takeaway": "«Puedo disfrutar y saber cuánto me cuesta.»",
+    "challenge": "observa un gasto repetido durante una semana y decide si quieres mantenerlo, reducirlo o cambiarlo."
+  },
+  {
+    "id": "aprende-04",
+    "version": 1,
+    "title": "De «algún día» a una meta",
+    "minutes": 6,
+    "objective": "calcular cuánto falta para una meta y revisar si el ritmo de aportación es viable.",
+    "intro": "«Una meta empieza a tomar forma cuando le ponemos nombre. Después vemos cuánto falta y qué ritmo puedes sostener.»",
+    "cards": [
+      {
+        "title": "Ponle forma",
+        "text": "Una meta puede incluir categoría, nombre, costo objetivo, cantidad ya ahorrada y fecha deseada. «Ahorrar» es una intención; «reunir $1,200 para un curso dentro de seis meses» permite hacer cuentas.\n\nLa fecha es una referencia que puedes ajustar si tu situación cambia."
+      },
+      {
+        "title": "Cuenta lo que ya tienes",
+        "text": "Si el curso cuesta $1,200 y ya guardaste $300, faltan $900. En seis aportaciones mensuales iguales, serían $150 cada una. Este ejercicio no incluye rendimientos ni cambios en el precio.\n\nEl avance es cantidad ahorrada ÷ meta × 100. Aquí: $300 ÷ $1,200 × 100 = 25%."
+      },
+      {
+        "title": "Una meta debe poder ajustarse",
+        "text": "Si solo puedes aportar $100 al mes, reunir los $900 faltantes tomaría nueve aportaciones. Puedes cambiar la fecha, revisar el costo de la meta o ajustar la aportación si existe margen real.\n\nNo hace falta pedir prestado para que la barra avance. Cambiar el plan no borra lo que ya lograste."
+      }
+    ],
+    "questions": [
+      {
+        "id": "P1",
+        "title": "¿Cuánto falta?",
+        "prompt": "La meta es $2,000 y llevas $500. ¿Cuánto falta, sin considerar rendimientos?",
+        "options": [
+          "$2,500.",
+          "$500.",
+          "$1,500."
+        ],
+        "correct": 2,
+        "explanation": "$2,000 − $500 = $1,500.",
+        "mistakes": "A: hay que restar lo ahorrado, no sumarlo. B: esa es la cantidad reunida, no la faltante."
+      },
+      {
+        "id": "P2",
+        "title": "Lee tu avance",
+        "prompt": "Con esos $500 de una meta de $2,000, ¿qué porcentaje llevas?",
+        "options": [
+          "25%.",
+          "50%.",
+          "75%."
+        ],
+        "correct": 0,
+        "explanation": "$500 ÷ $2,000 = 0.25, es decir, 25%.",
+        "mistakes": "B: 50% serían $1,000. C: 75% serían $1,500."
+      },
+      {
+        "id": "P3",
+        "title": "Cambió tu capacidad",
+        "prompt": "La aportación planeada ya no cabe después de cubrir necesidades. ¿Qué puedes hacer?",
+        "options": [
+          "Pedir prestado solo para completar la barra.",
+          "Ajustar fecha, objetivo o aportación según lo que puedas sostener.",
+          "Considerar perdido todo lo ahorrado."
+        ],
+        "correct": 1,
+        "explanation": "Un plan revisable se adapta a tu capacidad.",
+        "mistakes": "A: subiría el saldo ahorrado, pero también la deuda. C: el dinero reunido sigue siendo parte del avance."
+      }
+    ],
+    "takeaway": "«Una meta clara también puede ser flexible.»",
+    "challenge": "escribe una meta y compara dos fechas posibles. Puedes llevarla después al apartado Ahorros."
+  },
+  {
+    "id": "aprende-05",
+    "version": 1,
+    "title": "Un colchón para los imprevistos",
+    "minutes": 5,
+    "objective": "distinguir una emergencia de un gasto previsible y entender por qué importa tener dinero accesible.",
+    "intro": "«No puedo predecir todos los días de lluvia, pero puedo preparar un pequeño refugio.»",
+    "cards": [
+      {
+        "title": "Un ahorro con otra misión",
+        "text": "Un fondo de emergencia es dinero reservado para situaciones necesarias e inesperadas: una reparación urgente o una interrupción de ingresos, por ejemplo.\n\nUna compra planeada o un pago anual conocido también necesitan organización, pero pueden tener su propio ahorro. Separarlos ayuda a saber qué respaldo tienes."
+      },
+      {
+        "title": "Empieza con una etapa posible",
+        "text": "No necesitas formar todo el fondo de golpe. Puedes comenzar con una cantidad pequeña que sí puedas apartar y revisar después cuánto respaldo necesitas.\n\nEl objetivo depende de gastos esenciales, estabilidad del ingreso, personas a cargo y otros apoyos. Que otra persona tenga más ahorrado no determina lo que tú puedes aportar hoy."
+      },
+      {
+        "title": "Poder usarlo también importa",
+        "text": "La liquidez es la facilidad para convertir o disponer de dinero cuando lo necesitas. Un fondo para imprevistos requiere considerar acceso, seguridad y condiciones de retiro, además de cualquier rendimiento.\n\nSi lo utilizas para una emergencia, cumplió su propósito. Cuando sea posible, ajusta el plan para reponerlo."
+      }
+    ],
+    "questions": [
+      {
+        "id": "P1",
+        "title": "El dinero de respaldo",
+        "prompt": "¿Qué describe mejor un fondo de emergencia?",
+        "options": [
+          "Dinero para aprovechar cualquier oferta.",
+          "Una reserva para necesidades inesperadas.",
+          "Un ingreso extra garantizado cada mes."
+        ],
+        "correct": 1,
+        "explanation": "Su función es dar respaldo ante imprevistos necesarios.",
+        "mistakes": "A: una promoción no es por sí misma una emergencia. C: es dinero reservado, no un nuevo ingreso garantizado."
+      },
+      {
+        "id": "P2",
+        "title": "¿Qué significa liquidez?",
+        "prompt": "¿Qué significa liquidez?",
+        "options": [
+          "Que el dinero siempre aumenta.",
+          "Que no existen riesgos.",
+          "La facilidad para disponer del dinero cuando lo necesitas."
+        ],
+        "correct": 2,
+        "explanation": "Liquidez describe el acceso al dinero.",
+        "mistakes": "A: crecimiento y liquidez son conceptos diferentes. B: poder retirar no elimina todos los riesgos."
+      },
+      {
+        "id": "P3",
+        "title": "Tuviste que utilizarlo",
+        "prompt": "Usaste parte del fondo para una emergencia real. ¿Qué sigue?",
+        "options": [
+          "Reconocer que cumplió su función y planear reponerlo cuando sea posible.",
+          "Sentir que ahorrar no sirvió.",
+          "Reponerlo inmediatamente aunque tengas que dejar de comer."
+        ],
+        "correct": 0,
+        "explanation": "Usarlo para su propósito es útil; reponerlo depende de tu capacidad.",
+        "mistakes": "B: evitó que tuvieras que resolver todo sin respaldo. C: la reposición no debe desplazar necesidades esenciales."
+      }
+    ],
+    "takeaway": "«Mi fondo está para ayudarme, no para competir con otros.»",
+    "challenge": "identifica un gasto previsible y un imprevisto que te gustaría poder afrontar."
+  },
+  {
+    "id": "aprende-06",
+    "version": 1,
+    "title": "Tu tarjeta no es dinero extra",
+    "minutes": 7,
+    "objective": "distinguir crédito de ingreso e interpretar conceptos básicos del estado de cuenta.",
+    "intro": "«Una tarjeta puede adelantar una compra, pero no borra lo que costará pagarla. Vamos a leer las pistas.»",
+    "cards": [
+      {
+        "title": "Débito y crédito",
+        "text": "En una tarjeta de débito usas dinero de tu cuenta. Con crédito utilizas una línea prestada que debes pagar según sus condiciones.\n\nTu límite de crédito indica cuánto te permiten utilizar; no demuestra cuánto puedes pagar cómodamente. Una compra a plazos compromete parte del dinero futuro."
+      },
+      {
+        "title": "Dos fechas distintas",
+        "text": "La fecha de corte cierra un periodo del estado de cuenta. La fecha límite de pago indica hasta cuándo debes realizar el pago correspondiente. Consulta las fechas concretas en tu estado de cuenta: no son iguales para todas las tarjetas."
+      },
+      {
+        "title": "Los pagos no significan lo mismo",
+        "text": "El pago mínimo es la cantidad requerida para mantener al corriente ese periodo; pagarlo no suele evitar intereses ordinarios sobre la deuda pendiente.\n\nEl pago para no generar intereses es el importe indicado para evitar los intereses ordinarios correspondientes a las compras del periodo bajo las condiciones de tu tarjeta. No implica que desaparezcan comisiones, intereses ya generados o costos de operaciones especiales, como disposiciones de efectivo.\n\nEl CAT es un indicador anual para comparar costos de crédito bajo ciertos supuestos. No sustituye revisar comisiones, condiciones y cuánto terminarás pagando."
+      }
+    ],
+    "questions": [
+      {
+        "id": "P1",
+        "title": "Tu capacidad de compra",
+        "prompt": "Tu límite de crédito aumentó $5,000. ¿Qué significa?",
+        "options": [
+          "Que tu sueldo aumentó $5,000.",
+          "Que te regalaron $5,000.",
+          "Que puedes disponer de más crédito, pero deberás pagar lo que uses."
+        ],
+        "correct": 2,
+        "explanation": "Un límite mayor amplía lo que puedes pedir prestado, no tus ingresos.",
+        "mistakes": "A: el banco no cambió tu sueldo. B: lo utilizado debe devolverse."
+      },
+      {
+        "id": "P2",
+        "title": "Identifica la fecha",
+        "prompt": "Tu estado de cuenta cierra el 8 de agosto y señala el 28 de agosto como fecha límite. ¿Cuál corresponde al límite de pago?",
+        "options": [
+          "El 28 de agosto.",
+          "El 8 de agosto.",
+          "Cualquier día del mes siguiente."
+        ],
+        "correct": 0,
+        "explanation": "La fecha límite indicada es el día 28.",
+        "mistakes": "B: el día 8 cierra el periodo. C: el estado de cuenta sí establece una fecha concreta."
+      },
+      {
+        "id": "P3",
+        "title": "Pago mínimo",
+        "prompt": "Pagas puntualmente solo el mínimo. ¿Qué afirmación es correcta?",
+        "options": [
+          "Siempre eliminaste todos los intereses.",
+          "Cubriste el mínimo del periodo, pero la deuda restante puede generar intereses ordinarios.",
+          "Ya liquidaste toda la deuda de la tarjeta."
+        ],
+        "correct": 1,
+        "explanation": "Pago mínimo y pago para no generar intereses son importes distintos.",
+        "mistakes": "A: estar al corriente no equivale a evitar intereses ordinarios. C: el mínimo no necesariamente cubre la totalidad de la deuda."
+      }
+    ],
+    "takeaway": "«Antes de usar crédito, pienso cómo y cuándo lo pagaré.»",
+    "challenge": "si tienes una tarjeta, localiza sus dos fechas y ambos importes de pago sin compartir datos de la tarjeta. Si no tienes, repite con el ejemplo."
+  },
+  {
+    "id": "aprende-07",
+    "version": 1,
+    "title": "Las primeras semillas de inversión",
+    "minutes": 7,
+    "objective": "comprender riesgo, plazo, liquidez, diversificación e interés compuesto sin confundir ejemplos con promesas.",
+    "intro": "«Una semilla necesita tiempo y condiciones adecuadas. Con el dinero también conviene entender qué puede pasar antes de empezar.»",
+    "cards": [
+      {
+        "title": "Ahorrar e invertir",
+        "text": "Ahorrar es reservar una parte del dinero. Invertir es destinar recursos buscando un rendimiento y asumiendo riesgos. Algunos productos permiten combinar ambos propósitos, pero sus condiciones importan.\n\nEl rendimiento es la ganancia o pérdida de una inversión. El riesgo incluye la posibilidad de que el resultado sea distinto al esperado o de perder dinero. Antes de decidir, también importa cuándo necesitarás recuperarlo: ese es tu horizonte o plazo."
+      },
+      {
+        "title": "Más que una cifra atractiva",
+        "text": "La liquidez indica qué tan fácil es disponer del dinero. Una inversión que no puedes retirar a tiempo puede no servir para una necesidad cercana.\n\nDiversificar significa distribuir la inversión entre distintas exposiciones, en lugar de depender de una sola. Puede reducir la concentración del riesgo, pero no elimina las pérdidas posibles. Tener varias inversiones muy parecidas tampoco asegura una diversificación efectiva."
+      },
+      {
+        "title": "¿Qué es el interés compuesto?",
+        "text": "Cuando reinviertes los rendimientos, estos también pueden generar rendimientos posteriores. Para practicar, imaginemos $1,000 con una tasa hipotética y constante del 10% anual, sin aportaciones, comisiones ni impuestos:\n\n- Tras el primer año: $1,000 + $100 = $1,100.\n- Tras el segundo: $1,100 + $110 = $1,210.\n\nLos $110 del segundo año se calculan sobre $1,100, no solo sobre los $1,000 iniciales. Es un ejercicio matemático, no una oferta ni una tasa esperada."
+      },
+      {
+        "title": "Crecer en números no es todo",
+        "text": "Las comisiones y los impuestos pueden reducir lo que conservas. La inflación, el aumento general de precios, puede reducir lo que compras con ese dinero. Por eso, un saldo mayor no garantiza mayor poder de compra.\n\nAntes de elegir una inversión, necesitas entender el producto y revisar si sus riesgos, costos y plazo corresponden a tu situación."
+      }
+    ],
+    "questions": [
+      {
+        "id": "P1",
+        "title": "Necesidad cercana",
+        "prompt": "Necesitas usar un dinero la próxima semana. ¿Qué es especialmente importante revisar?",
+        "options": [
+          "Solo la publicidad del rendimiento.",
+          "Si puedes disponer de él a tiempo y qué riesgo corre su valor.",
+          "Que la inversión sea popular."
+        ],
+        "correct": 1,
+        "explanation": "El acceso y la posible pérdida importan cuando necesitas el dinero pronto.",
+        "mistakes": "A: una cifra no explica condiciones de retiro ni pérdidas posibles. C: popularidad no significa compatibilidad con tu necesidad."
+      },
+      {
+        "id": "P2",
+        "title": "El segundo año",
+        "prompt": "En el ejercicio de $1,000 al 10% anual constante, reinvirtiendo y sin costos, ¿cuál es el total al terminar el segundo año?",
+        "options": [
+          "$1,100.",
+          "$1,200.",
+          "$1,210."
+        ],
+        "correct": 2,
+        "explanation": "El segundo rendimiento es $1,100 × 10% = $110; total: $1,210.",
+        "mistakes": "A: es el saldo después del primer año. B: ese total correspondería a conservar los rendimientos fuera sin reinvertirlos."
+      },
+      {
+        "id": "P3",
+        "title": "Diversificar",
+        "prompt": "¿Qué significa diversificar correctamente?",
+        "options": [
+          "Distribuir exposiciones para reducir concentración, sin garantizar que no habrá pérdidas.",
+          "Asegurarte de que todas las inversiones siempre ganarán.",
+          "Poner todo en una sola inversión porque ha subido antes."
+        ],
+        "correct": 0,
+        "explanation": "Reduce la dependencia de una sola exposición, no todos los riesgos.",
+        "mistakes": "B: diversificar no garantiza ganancias. C: concentra el riesgo y el pasado no garantiza el resultado futuro."
+      }
+    ],
+    "takeaway": "«Antes de pensar cuánto podría ganar, entiendo qué podría pasar con mi dinero.»",
+    "challenge": "escribe tres preguntas para investigar un producto: cómo funciona, qué podría perder y cuándo podría retirar."
+  },
+  {
+    "id": "aprende-08",
+    "version": 1,
+    "title": "Detective de ofertas sospechosas",
+    "minutes": 5,
+    "objective": "reconocer señales de engaño y verificar una oferta fuera del mensaje que la promociona.",
+    "intro": "«Mi lupa favorita tiene tres pasos: pausar, revisar y verificar.»",
+    "cards": [
+      {
+        "title": "Cuando quieren que decidas sin pensar",
+        "text": "Un mensaje promete duplicar tu dinero en una semana, sin riesgo, pero exige transferir ahora. La combinación de ganancias extraordinarias, supuesta ausencia de riesgo y presión es una señal de alerta.\n\nLos videos, logotipos o imágenes de personas conocidas no demuestran que una oferta sea auténtica."
+      },
+      {
+        "title": "Verifica por tu cuenta",
+        "text": "Si una empresa se presenta como institución financiera en México, consulta su información en el registro oficial correspondiente; el SIPRES de CONDUSEF es una herramienta para esa revisión.\n\nBusca los canales oficiales de manera independiente y compara los datos. No te quedes únicamente con el enlace, teléfono o captura que envió quien ofrece la inversión. Una empresa real también puede ser suplantada.\n\nEncontrar una institución en un registro no garantiza rendimientos ni demuestra que la persona que te contactó trabaje allí."
+      },
+      {
+        "title": "Protege el acceso",
+        "text": "No compartas contraseñas, NIP o códigos de verificación con alguien que te los pide por mensaje o llamada. Si recibes una alerta inesperada, revisa desde la aplicación o canal oficial que tú abras. Puedes ampliar estas medidas en las [recomendaciones de seguridad de la Asociación de Bancos de México](https://www.abm.org.mx/recomendaciones-de-seguridad/abm-recomendaciones-seguridad-d.htm).\n\nSi ya compartiste información o transferiste ante una posible estafa, contacta cuanto antes a tu institución por un canal oficial para recibir instrucciones. Conserva mensajes y comprobantes. Haber sido engañado no es motivo para avergonzarte ni retrasar la búsqueda de ayuda."
+      }
+    ],
+    "questions": [
+      {
+        "id": "P1",
+        "title": "Una promesa llamativa",
+        "prompt": "Te ofrecen ganancias enormes sin riesgo si pagas en cinco minutos. ¿Qué haces primero?",
+        "options": [
+          "Detenerte y verificar por canales independientes.",
+          "Transferir para no perder la oportunidad.",
+          "Enviar el anuncio a tus amistades como inversión segura."
+        ],
+        "correct": 0,
+        "explanation": "La presión y la promesa justifican pausar y comprobar.",
+        "mistakes": "B: la urgencia puede buscar que no revises. C: compartirlo como seguro puede extender el engaño."
+      },
+      {
+        "id": "P2",
+        "title": "La institución existe",
+        "prompt": "La empresa aparece en un registro oficial. ¿Qué puedes concluir?",
+        "options": [
+          "Que cualquier persona que use su logo es representante auténtico.",
+          "Que tu inversión no puede perder valor.",
+          "Que es un dato útil, pero aún debes comprobar al interlocutor, el producto y los canales oficiales."
+        ],
+        "correct": 2,
+        "explanation": "Un registro no autentica a quien te escribió ni garantiza ganancias.",
+        "mistakes": "A: los logotipos pueden copiarse. B: autorización y riesgo de inversión son asuntos distintos."
+      },
+      {
+        "id": "P3",
+        "title": "Un código por mensaje",
+        "prompt": "Un supuesto asesor te pide un código de verificación para «proteger tu dinero». ¿Qué haces?",
+        "options": [
+          "Compartirlo si su foto parece profesional.",
+          "No compartirlo y comprobar la situación directamente por un canal oficial.",
+          "Publicarlo para preguntar si alguien lo reconoce."
+        ],
+        "correct": 1,
+        "explanation": "Un código puede permitir acceso u operaciones; no debe entregarse al interlocutor.",
+        "mistakes": "A: una foto no verifica identidad. C: publicarlo también expone el código."
+      }
+    ],
+    "takeaway": "«La urgencia de otra persona no tiene que convertirse en mi decisión.»",
+    "challenge": "localiza por tu cuenta un canal oficial de tu institución y guárdalo. No necesitas compartirlo con Nutty."
+  }
+]

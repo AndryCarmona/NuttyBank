@@ -2,6 +2,7 @@ import { SymbolView } from 'expo-symbols';
 import { View } from 'react-native';
 import { colors } from '@/components/home/data';
 const icons = {
+  Puntaje: { ios: 'medal', android: 'workspace_premium', web: 'workspace_premium' },
   Viaje: { ios: 'airplane', android: 'flight', web: 'flight' },
   Casa: { ios: 'house', android: 'home', web: 'home' },
   Coche: { ios: 'car', android: 'directions_car', web: 'directions_car' },
