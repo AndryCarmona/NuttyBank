@@ -1,7 +1,7 @@
 
 import { Image, Pressable, ScrollView, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 import ScreenSurface from '../home/ScreenSurface';
-import { DockedNavigation } from '../home/components';
+import { Navigation, useNavigationClearance } from '../home/components';
 import { colors as c } from '../home/data';
 import lessons from './lessons.json';
 import { Action, Choice, styles as shared } from './ui';
@@ -24,6 +24,7 @@ type Props = { lesson: typeof lessons[number]; index: number; mode: string; atte
 export default function LessonPlayer(props: Props) {
   const { lesson, index, mode, attempt, question, onQuestion, save, go, back } = props;
   const { height, fontScale } = useWindowDimensions();
+  const clearance = useNavigationClearance();
   const compact = height < 720 || fontScale > 1.15;
   const quiz = mode === 'quiz';
   const step = Math.min(attempt.step, lesson.cards.length - 1);
@@ -59,7 +60,7 @@ export default function LessonPlayer(props: Props) {
       <View style={{ flex: 1, gap: 4 }}><Text style={shared.eyebrow}>{quiz ? `QUIZ ${number} DE 3` : `LECCIÓN ${index + 1} · NUTTY TE CUENTA`}</Text>{!quiz && <Text style={s.lessonTitle}>{lesson.title}</Text>}</View>
     </View>
     <View style={s.progress}><View style={[s.progressFill, { width: `${quiz ? (question + 1) / 3 * 100 : (step + (page + 1) / pages.length) / lesson.cards.length * 100}%` }]} /></View>
-    <View style={[s.content, { padding: compact ? 16 : 22 }]}>
+    <View style={[s.content, { padding: compact ? 16 : 22, paddingBottom: clearance }]}>
       <Text style={shared.eyebrow}>{quiz ? `PREGUNTA ${question + 1} DE 3` : `IDEA ${step + 1} DE ${lesson.cards.length} · DIÁLOGO ${page + 1} DE ${pages.length}`}</Text>
       <ScrollView key={`${mode}-${step}-${page}-${question}`} style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1, justifyContent: quiz ? 'flex-start' : 'center', gap: compact ? 10 : 16 }} showsVerticalScrollIndicator={false} bounces={false} overScrollMode="never">
         <View style={[s.speech, quiz && s.quizSpeech]}>
@@ -75,7 +76,7 @@ export default function LessonPlayer(props: Props) {
       {quiz && <Image accessible accessibilityLabel="Nutty pensando contigo" source={require('@/assets/images/nutty-quiz.png')} resizeMode="contain" style={{ width: compact ? 241 : 312, maxWidth: '100%', height: compact ? 165 : 215, borderRadius: 22, alignSelf: "center" }} />}
       <View style={s.controls}><View style={{ flex: 1 }}><Action label="← Anterior" onPress={previous} /></View><View style={{ flex: 1 }}><Action label={quiz ? question === 2 ? 'Ver resumen' : 'Siguiente →' : final ? 'Practicar →' : 'Continuar →'} disabled={quiz && (attempt.answers[questionIndex] < 0 || question === 2 && attempt.answers.some(n => n < 0))} onPress={next} /></View></View>
     </View>
-    <DockedNavigation />
+    <Navigation />
   </ScreenSurface>;
 }
 const s = StyleSheet.create({
