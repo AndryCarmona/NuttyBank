@@ -1,0 +1,27 @@
+# Mantiene despierto el backend de Render (el plan gratuito lo duerme tras 15 min sin tráfico).
+# Pide /health cada 5 minutos. GitHub no garantiza la hora exacta de las ejecuciones programadas,
+# por eso es un respaldo: la opción principal es un monitor externo (ver docs/despliegue.md).
+name: Mantener activo el backend
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Pedir /health
+        env:
+          # Se puede cambiar sin tocar el código: Settings > Secrets and variables > Actions > Variables > API_URL
+          API_URL: ${{ vars.API_URL || 'https://nuttybank.onrender.com' }}
+        run: |
+          # Si el servidor estaba dormido, despertar tarda cerca de 1 minuto: se espera y se reintenta.
+          curl --fail --silent --show-error --max-time 90 \
+               --retry 3 --retry-delay 20 --retry-all-errors \
+               "$API_URL/health"
+          echo
