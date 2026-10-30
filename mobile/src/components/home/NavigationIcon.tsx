@@ -1,7 +1,11 @@
 import { SymbolView } from 'expo-symbols';
 import { View } from 'react-native';
-import { colors } from './data';
+import { colors } from '@/components/home/data';
 const icons = {
+  Viaje: { ios: 'airplane', android: 'flight', web: 'flight' },
+  Casa: { ios: 'house', android: 'home', web: 'home' },
+  Coche: { ios: 'car', android: 'directions_car', web: 'directions_car' },
+  Boda: { ios: 'heart', android: 'favorite', web: 'favorite' },
   Fecha: { ios: 'calendar', android: 'calendar_month', web: 'calendar_month' },
   Salud: { ios: 'pills', android: 'medication', web: 'medication' },
   Regalos: { ios: 'gift', android: 'redeem', web: 'redeem' },
